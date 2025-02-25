@@ -259,7 +259,7 @@ $(document).ready(function () {
 
         currency_init_list()
 
-        $('#confirm-save-btn').data('id', undefined);
+        $('#confirm-save-btn').removeData( "id" );
         $('#expenseModal').modal('show');
 
     })
