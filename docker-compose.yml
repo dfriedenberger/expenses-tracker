@@ -6,6 +6,8 @@ services:
     build: ./app
     environment:
       SQLALCHEMY_DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}"
+      WEB_USERNAME: ${WEB_USERNAME}
+      WEB_PASSWORD: ${WEB_PASSWORD}
     volumes:
       - ./app:/app
     ports:

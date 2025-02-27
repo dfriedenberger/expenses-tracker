@@ -1,7 +1,10 @@
+import os
 from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi import HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
@@ -12,7 +15,33 @@ from db.database import engine, SessionLocal
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+# Basic Authentication
+security = HTTPBasic()
+
+
+# Funktion zum Abrufen einer Umgebungsvariablen mit Fehlerbehandlung
+def get_env_variable(var_name: str) -> str:
+    value = os.getenv(var_name)
+    if value is None:
+        raise RuntimeError(f"Fehlende Umgebungsvariable: {var_name}")
+    return value
+
+
+VALID_USERNAME = get_env_variable("WEB_USERNAME")
+VALID_PASSWORD = get_env_variable("WEB_PASSWORD")
+
+
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    if credentials.username != VALID_USERNAME or credentials.password != VALID_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+
+app = FastAPI(dependencies=[Depends(verify_credentials)])
 
 # CORS settings
 app.add_middleware(
@@ -33,11 +62,6 @@ def get_db():
         db.close()
 
 
-@app.post("/expenses/", response_model=schemas.Expense)
-def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
-    return crud.create_expense(db=db, expense=expense)
-
-
 @app.get("/tags/", response_model=List[schemas.Tag])
 def read_tags():
     return [
@@ -55,6 +79,11 @@ def read_currency():
     return [
         {"shortcut": "Kč", "name": "Tschechische Krone", "factor": 0.04}
     ]
+
+
+@app.post("/expenses/", response_model=schemas.Expense)
+def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
+    return crud.create_expense(db=db, expense=expense)
 
 
 @app.get("/expenses/", response_model=List[schemas.Expense])
