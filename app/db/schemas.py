@@ -6,7 +6,8 @@ from datetime import date
 class ExpenseBase(BaseModel):
     title: str
     price: float
-    currency: Optional[str] = "€"
+    currency: Optional[str] = None
+    price_currency: Optional[float] = None
     date: date
     tags: List[str]
 

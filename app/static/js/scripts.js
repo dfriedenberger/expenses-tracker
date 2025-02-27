@@ -5,26 +5,14 @@ $(document).ready(function () {
     // Fetch expenses from the backend
     function fetchExpenses() {
         $.get('/tags/', function (tags) {
-            $.get('/currency/', function (currency) {
-                $.get('/expenses/', function (data) {
-                    renderExpenses(data, tags, currency);
-                })
+            $.get('/expenses/', function (data) {
+                renderExpenses(data, tags);
             })
         })
     }
 
-    //Utils
-    function calculate(price, currency, currencyList) {
-        cur = currencyList.find(c => c.shortcut === currency)
-        if(cur) {
-            return cur.factor * price
-        }
-        return undefined
-    }
-
-
     // Render expenses list
-    function renderExpenses(expenses, tags, currency) {
+    function renderExpenses(expenses, tags) {
         const expensesList = $('#expenses-list');
         expensesList.empty();
 
@@ -50,14 +38,6 @@ $(document).ready(function () {
                 year: "numeric"
             });
 
-
-            //Map Currency
-            if(expense.currency != "€")
-            {
-                expense.price_eur = calculate(expense.price, expense.currency, currency)
-            }
-
-
             var html = expenseTemplate(expense);
             expensesList.append(html);
         });
@@ -66,36 +46,43 @@ $(document).ready(function () {
     //form
 
     //Currency
+    function currency_calculate(price, currency, currencyList) {
+        cur = currencyList.find(c => c.shortcut === currency)
+        if(cur) {
+            return cur.factor * price
+        }
+        return undefined
+    }
+
     function currency_init_list() {
 
         $.get('/currency/', function (data) {
             
-            const currencyList = $('#currency-list');
-            currencyList.empty();
-
-            var source = $("#currency-template").html();
-            var template = Handlebars.compile(source);
-    
+            $('#currency').empty();
             data.forEach(currency => {
-                var html = template(currency);
-                currencyList.append(html);
-            });
+                $('#currency').append($('<option>', {value: currency.shortcut, text:currency.shortcut + ' - ' + currency.name}));
+            })
         })
     }
 
-    $(document).on('click', '#currency', function (ev) {
+    $(document).on('click', '#currency-form', function (ev) {
         ev.preventDefault()
-        $("#currency-list").slideToggle()
+        $("#currency-form-group").slideToggle()
     })
 
-    $(document).on('click', '.currency', function (ev) {
+    $(document).on('click', '#convert-currency', function (ev) {
         ev.preventDefault()
-        currency = $(this).data('currency')
+        price_currency = $("#price_currency").val()
+        currency = $("#currency").val()
 
-        console.log(currency)
-        $("#currency").val(currency)
-        $("#currency-list").slideUp()
+        $.get('/currency/', function (currencyList) {
+            price_eur = currency_calculate(price_currency, currency, currencyList)
+            console.log(price_currency, currency, "=>" , price_eur)
 
+            $("#price").val(price_eur)
+            $("#currency-form-group").slideUp()
+        })
+      
     })
     //Tags
     function tags_set_value(tags) {
@@ -181,10 +168,19 @@ $(document).ready(function () {
         const expense = {
             title: $('#title').val(),
             price: $('#price').val(),
-            currency: $('#currency').val(),
             date: $('#date').val(),
-            tags: tags_getValues()
+            tags: tags_getValues(),
+            currency: undefined,
+            price_currency: undefined
         };
+
+        price_currency = $('#price_currency').val()
+        if (price_currency)
+        {
+            expense.currency = $('#currency').val()
+            expense.price_currency = price_currency
+        }
+
         
         var url = "/expenses/";
         var type = "POST"
@@ -250,7 +246,6 @@ $(document).ready(function () {
 
         $("#title").val("")
         $("#price").val("")
-        $("#currency").val("€")
 
         const todayISO = new Date().toISOString().split('T')[0];
         $("#date").val(todayISO)
@@ -258,6 +253,7 @@ $(document).ready(function () {
         tags_set_value([])
 
         currency_init_list()
+        $("#currency").val("")
 
         $('#confirm-save-btn').removeData( "id" );
         $('#expenseModal').modal('show');
@@ -276,11 +272,12 @@ $(document).ready(function () {
                 $("#expenseModalLabel").text("Bearbeiten")
                 $("#title").val(data.title)
                 $("#price").val(data.price)
-                $("#currency").val(data.currency)
                 $("#date").val(data.date)
 
                 tags_set_value(data.tags)
                 currency_init_list()
+                $("#currency").val(data.currency)
+                $("#price_currency").val(data.price_currency)
 
                 $('#confirm-save-btn').data('id', expenseId);
                 $('#expenseModal').modal('show');

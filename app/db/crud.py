@@ -3,7 +3,11 @@ from . import models, schemas
 
 
 def create_expense(db: Session, expense: schemas.ExpenseCreate):
+    print("create_expense", expense.dict())
+
     db_expense = models.Expense(**expense.dict())
+    print("db_expense", db_expense)
+
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)

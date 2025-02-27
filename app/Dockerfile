@@ -1,5 +1,5 @@
 # Basis-Image
-FROM python:3.13
+FROM python:3.11
 
 # Setze das Arbeitsverzeichnis im Container
 WORKDIR /app
@@ -8,10 +8,6 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install uvicorn
-
-
-RUN pip install psycopg2 
 
 # Kopiere den restlichen Anwendungscode
 COPY . .

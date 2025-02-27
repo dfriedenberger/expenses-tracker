@@ -53,7 +53,6 @@ def read_tags():
 @app.get("/currency/", response_model=List[schemas.Currency])
 def read_currency():
     return [
-        {"shortcut": "€", "name": "Euro", "factor": 1.0},
         {"shortcut": "Kč", "name": "Tschechische Krone", "factor": 0.04}
     ]
 

@@ -35,9 +35,9 @@
         <div class="expense-item position-relative border p-3 rounded" data-id="{{id}}">
             <div class="d-flex justify-content-between align-items-start">
                 <h5 class="mb-1">
-                    {{title}} - {{price}} {{currency}}
-                    {{#if price_eur}}
-                    ({{price_eur}} €)
+                    {{title}} - {{price}} €
+                    {{#if price_currency}}
+                    ({{price_currency}} {{currency}})
                     {{/if}}
 
                 </h5>
@@ -61,11 +61,6 @@
         <button class="btn btn-sm tag" id="{{id}}" type="button">{{name}} <i class="bi"></i></button>
     </script>
 
-    <!-- Currency -->
-    <script id="currency-template" type="text/x-handlebars-template">
-        <button type="button" class="btn btn-sm btn-info currency" data-currency="{{shortcut}}">{{name}} - {{shortcut}}</button>
-    </script>
-
     <!-- Expense Modal -->
     <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expenseModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -80,15 +75,16 @@
                             <input type="text" class="form-control" id="title" placeholder="Titel" required>
                         </div>
 
-                        <div class="input-group">
-                            <input type="number" step=".1" class="form-control" placeholder="Preis" aria-label="Preis" id="price" required>
-                            <input type="button" class="btn btn-secondary" id="currency" value="€">
-                        </div>
                         <div class="input-group mb-3">
-                                <div id="currency-list" style="display:none;">
-                                        <button type="button" class="btn btn-sm btn-info currency" data-currency="€">Euro - €</button>
-                                        <button type="button" class="btn btn-sm btn-info currency" data-currency="Kc">Tschechische Kronen - kc</button>
-                                </div>
+                            <input type="number" step=".1" class="form-control" placeholder="Preis" aria-label="Preis" id="price" required>
+                            <input type="button" class="btn btn-secondary" id="currency-form" value="€">
+                        </div>
+
+                        <div class="input-group mb-3" id="currency-form-group" style="display:none;">
+                                <input type="number" step=".1" class="form-control" placeholder="Preis" aria-label="Preis" id="price_currency">
+                                <select class="form-select" id="currency">
+                                </select>
+                                <input type="button" class="btn btn-secondary" id="convert-currency" value="Umrechnen">
                         </div>
 
                         <div class="input-group mb-3" >
