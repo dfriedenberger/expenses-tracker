@@ -1,8 +1,9 @@
 version: '3.8'
 
+name: "expenses-tracker"
+
 services:
   backend:
-    container_name: fastapi
     build: ./app
     environment:
       SQLALCHEMY_DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}"
@@ -21,7 +22,6 @@ services:
 
   db:
     image: postgres:latest
-    container_name: postgres_container
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
