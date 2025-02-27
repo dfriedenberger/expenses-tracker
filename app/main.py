@@ -1,4 +1,3 @@
-import os
 from typing import List
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +7,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
+from db.util import get_env_variable
 from db import models, schemas
 from db import crud
 from db.database import engine, SessionLocal
@@ -17,14 +17,6 @@ models.Base.metadata.create_all(bind=engine)
 
 # Basic Authentication
 security = HTTPBasic()
-
-
-# Funktion zum Abrufen einer Umgebungsvariablen mit Fehlerbehandlung
-def get_env_variable(var_name: str) -> str:
-    value = os.getenv(var_name)
-    if value is None:
-        raise RuntimeError(f"Fehlende Umgebungsvariable: {var_name}")
-    return value
 
 
 VALID_USERNAME = get_env_variable("WEB_USERNAME")
