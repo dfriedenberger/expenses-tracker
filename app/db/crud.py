@@ -24,6 +24,9 @@ def get_expenses(db: Session, from_date: date = None, to_date: date = None):
     if to_date:
         query = query.filter(models.Expense.date <= to_date)
 
+    # Nach dem "date"-Feld absteigend sortieren (neueste zuerst)
+    query = query.order_by(models.Expense.date.desc())
+
     return query.all()
 
 
