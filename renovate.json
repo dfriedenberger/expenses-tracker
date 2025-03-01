@@ -7,7 +7,6 @@
   "packageRules": [
       {
         "packageNames": ["python"],
-        "docker": true,
         "enabled": true,
         "allowedVersions": ">=3.11.0 <3.12.0"
       }
