@@ -10,15 +10,12 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from db.util import get_env_variable, get_week_range, get_iso_weeks_in_year
+from db.util import get_env_variable, get_week_range, get_iso_weeks_in_year, get_week_day
 from db import models, schemas
 from db import crud
 from db.database import engine, SessionLocal
 from db.expense_stats import sum_expenses_by_category
 from db.tags import TAG_LIST, tags_get_categories, tags_get_limits
-
-# Deutsche Sprache für Datumsformat setzen (falls vom System unterstützt)
-locale.setlocale(locale.LC_TIME, "de_DE.utf8")
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
@@ -109,7 +106,7 @@ def read_statistic(
 
     return {
         "title": f'Auswertung der KW {week}/{year}',
-        "subtitle": f'{from_date.strftime("%a, %d.%m.%Y")} - {to_date.strftime("%a, %d.%m.%Y")}',
+        "subtitle": f'{get_week_day(from_date)}, {from_date.strftime("%d.%m.%Y")} - {get_week_day(to_date)}, {to_date.strftime("%d.%m.%Y")}',
         "week": week,
         "year": year,
         "last_week": last_week,

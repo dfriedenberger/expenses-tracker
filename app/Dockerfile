@@ -4,15 +4,6 @@ FROM python:3.11-slim
 # Setze das Arbeitsverzeichnis im Container
 WORKDIR /app
 
-# Installiere benötigte Pakete für Locale-Unterstützung
-RUN apt-get update && \
-    apt-get install -y locales
-    
-# Locale de_DE.UTF-8 generieren
-RUN sed -i -e 's/# de_DE.UTF-8 UTF-8/de_DE.UTF-8 UTF-8/' /etc/locale.gen
-RUN dpkg-reconfigure --frontend=noninteractive locales
-
-
 # Kopiere die Abhängigkeitsdatei und installiere die Pakete
 COPY requirements.txt .
 

@@ -15,3 +15,10 @@ uvicorn main:app --reload
 
 
 psql -U youruser -d expenses -W
+
+
+# restart 
+
+git pull origin main
+docker compose build
+docker compose restart

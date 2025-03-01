@@ -37,3 +37,14 @@ def get_iso_weeks_in_year(year: int) -> int:
     """Returns the number of ISO calendar weeks in a given year."""
     last_week = date(year, 12, 28).isocalendar()[1]  # KW von 28. Dez. bestimmen
     return last_week
+
+
+def get_week_day(day: date):
+    # Statisches Array für die deutschen Wochentags-Kürzel
+    week_days = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+
+    # Den Index des Wochentages (0 = Montag, 6 = Sonntag)
+    day_index = day.weekday()  # Montag=0, Sonntag=6
+
+    # Rückgabe der Kurzform des Wochentages
+    return week_days[day_index]
