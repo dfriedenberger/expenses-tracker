@@ -22,12 +22,21 @@ $(document).ready(function () {
         expenses.forEach(expense => {
 
             //Map Tag-Id to Tag-Name
-            tag_names = []
+            expense.tag_categories = []
+            expense.tag_tags       = []
+            expense.tag_persons    = []
+
             expense.tags.forEach(tag => {
-                tag_name = tags.find(x => x.id === tag).name;
-                tag_names.push(tag_name)
+                let tag_config = tags.find(x => x.id === tag)
+
+                if (tag_config.tag_typ == "category")
+                    expense.tag_categories.push(tag_config.name)
+                if (tag_config.tag_typ == "person")
+                    expense.tag_persons.push(tag_config.name)
+                if (tag_config.tag_typ == "tag")
+                    expense.tag_tags.push(tag_config.name)
             })
-            expense.tags = tag_names
+
            
             //Map date
             const date = new Date(expense.date);
@@ -95,7 +104,13 @@ $(document).ready(function () {
             var source = $("#tags-template").html();
             var template = Handlebars.compile(source);
     
+            let last_tag_typ = undefined
             data.forEach(tag => {
+
+                if (last_tag_typ && last_tag_typ != tag.tag_typ)
+                    tagList.append("<hr />");
+                last_tag_typ = tag.tag_typ
+
                 var html = template(tag);
                 tagList.append(html);
 
@@ -119,19 +134,46 @@ $(document).ready(function () {
         return $("#"+tag).data("enabled")
     }
 
+    var tag_configuration = {
+        "category" : {
+            "enable_class": "btn-primary",
+            "disable_class": "btn-outline-primary",
+            "enable_icon": "bi-shield-minus" ,
+            "disable_icon": "bi-shield-plus"
+        },
+        "person" : {
+            "enable_class": "btn-success",
+            "disable_class": "btn-outline-success",
+            "enable_icon": "bi-person-fill-dash",
+            "disable_icon": "bi-person-fill-add"
+        },
+        "tag" : {
+            "enable_class": "btn-info",
+            "disable_class": "btn-outline-info",
+            "enable_icon": "bi-shield-minus" ,
+            "disable_icon": "bi-shield-plus"
+        },
+    }
+
     function tag_enable(tag) {
-        $("#"+tag).removeClass("btn-outline-primary")
-        $("#"+tag).addClass("btn-primary")
-        $("#"+tag).find(".bi").removeClass("bi-shield-plus")
-        $("#"+tag).find(".bi").addClass("bi-shield-minus")
+        tag_typ = $("#"+tag).data("tag-typ")
+        config = tag_configuration[tag_typ]
+
+        $("#"+tag).removeClass(config["disable_class"])
+        $("#"+tag).addClass(config["enable_class"])
+        $("#"+tag).find(".bi").removeClass(config["disable_icon"])
+        $("#"+tag).find(".bi").addClass(config["enable_icon"])
         $("#"+tag).data("enabled", true)
     }
 
     function tag_disable(tag) {
-        $("#"+tag).removeClass("btn-primary")
-        $("#"+tag).addClass("btn-outline-primary")
-        $("#"+tag).find(".bi").removeClass("bi-shield-minus")
-        $("#"+tag).find(".bi").addClass("bi-shield-plus")
+        tag_typ = $("#"+tag).data("tag-typ")
+        config = tag_configuration[tag_typ]
+
+        $("#"+tag).removeClass(config["enable_class"])
+        $("#"+tag).addClass(config["disable_class"])
+        $("#"+tag).find(".bi").removeClass(config["enable_icon"])
+        $("#"+tag).find(".bi").addClass(config["disable_icon"])
         $("#"+tag).data("enabled", false)
     }
 
@@ -285,5 +327,118 @@ $(document).ready(function () {
         });
 
     });
+
+
+    //Statistics
+    let myChart;
+    $(document).on('click', '.btn-statistic', function () {
+        year = $(this).data("year")
+        week = $(this).data("week")
+
+        console.log(year, week)
+
+        if(year && week)
+        {
+            get_statistic(year, week)
+            return
+        }
+        $.get('/util/kw/', function (data) {
+            get_statistic(data.year, data.week)
+
+        })
+    })
+   
+
+
+    function get_statistic(year, week) {
+
+        $.get('/statistic/', { year: year, week: week }, function (statistic) {
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+    
+                $("#statistic-title").text(statistic.title)
+                $("#statistic-subtitle").text(statistic.subtitle)
+                $("#statistic-next-week").data("year",statistic.next_week_year)
+                $("#statistic-next-week").data("week",statistic.next_week)
+                $("#statistic-last-week").data("year",statistic.last_week_year)
+                $("#statistic-last-week").data("week",statistic.last_week)
+
+                l = statistic.data.length
+                data_ist = Array(l)
+                data_rest = Array(l)
+                data_oversized = Array(l)
+                for(var i = 0;i < l;i++)
+                {
+                    if(statistic.data[i] <= statistic.limits[i]) 
+                    {
+                        data_ist[i] = statistic.data[i];
+                        data_rest[i] = statistic.limits[i] - statistic.data[i];
+                        data_oversized[i] = 0
+                    }
+                    else
+                    {
+                        data_ist[i] = statistic.limits[i];
+                        data_rest[i] = 0;
+                        data_oversized[i] = statistic.data[i] - statistic.limits[i];
+                    }
+                }
+                
+              
+
+                const data = {
+                    labels: statistic.labels,
+                    datasets: [
+                        {
+                            label: 'Im Limit',
+                            data: data_ist,
+                            backgroundColor: 'rgb(80, 180, 60)', // Weicheres Grün
+                            borderColor: 'rgb(39, 87, 30)',
+                        },
+                        {
+                            label: 'Verfügbar',
+                            data: data_rest,
+                            backgroundColor: 'rgba(80, 180, 60, 0.22)', // Weicheres Grün
+                            borderColor: 'rgba(46, 102, 35, 0.22)',
+                        },
+                        {
+                            label: 'Überschritten',
+                            data: data_oversized,
+                            backgroundColor: 'rgb(220, 100, 60)', // Weniger grelles Rot
+                            borderColor: 'rgb(135, 62, 37)',
+                        },
+                    ]
+                };
+
+
+                if (myChart) {
+                    myChart.destroy();
+                }
+    
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        scales: {
+                            x: {
+                                stacked: true
+                            },
+                            y: {
+                                stacked: true,
+                                //min: 100,
+                                suggestedMax: statistic.suggestedMax // Empfohlener Maximalwert der Y-Achse
+                            }
+                        },
+                        responsive: true,
+                    }
+                });
+      
+
+
+
+        })
+        $('#statisticModal').modal('show');
+    }
+
+
 
 });

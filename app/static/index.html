@@ -12,24 +12,12 @@
     <div class="container">
         <h1 class="mt-5">Haushaltsausgaben-Tracker</h1>
         <button class="btn btn-primary my-3 btn-new"><i class="bi bi-plus-circle"></i> Ausgabe</button>
+        <button class="btn btn-primary my-3 btn-statistic"><i class="bi bi-file-earmark-excel-fill"></i> Auswertung</button>
         <div id="expenses-list">
             <!-- Expenses will be listed here -->
         </div>
     </div>
 
-    <!-- Expense -->
-    <script id="expense-template-deprecated" type="text/x-handlebars-template">
-        <div class="expense-item" data-id="{{id}}">
-            <h5>{{title}} - {{price}} {{currency}}</h5>
-            <p>{{date}}  
-            {{#each tags}}   
-                <span class="badge bg-primary">{{this}}</span>
-            {{/each}}
-            </p>
-            <button class="btn btn-warning btn-edit"><i class="bi bi-pencil"></i> Editieren</button>
-            <button class="btn btn-danger btn-delete"><i class="bi bi-trash"></i> Löschen</button>
-        </div>
-    </script>
 
     <script id="expense-template" type="text/x-handlebars-template">
         <div class="expense-item position-relative border p-3 rounded" data-id="{{id}}">
@@ -48,8 +36,14 @@
             </div>
             <p class="mb-1">{{date}}</p>
             <div>
-                {{#each tags}}   
+                {{#each tag_categories}}   
                     <span class="badge bg-primary">{{this}}</span>
+                {{/each}}
+                {{#each tag_tags}}   
+                    <span class="badge bg-info">{{this}}</span>
+                {{/each}}
+                {{#each tag_persons}}   
+                    <span class="badge bg-success"><i class="bi bi-person-fill"></i> {{this}}</span>
                 {{/each}}
             </div>
         </div>
@@ -58,7 +52,7 @@
 
     <!-- Tags -->
     <script id="tags-template" type="text/x-handlebars-template">
-        <button class="btn btn-sm tag" id="{{id}}" type="button">{{name}} <i class="bi"></i></button>
+        <button class="btn btn-sm tag" id="{{id}}" data-tag-typ="{{tag_typ}}" type="button">{{name}} <i class="bi"></i></button>
     </script>
 
     <!-- Expense Modal -->
@@ -123,11 +117,36 @@
         </div>
     </div>
 
+    <!-- Statistic  Modal -->
+    <div class="modal fade" id="statisticModal" tabindex="-1" aria-labelledby="statisticModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-excel-fill"></i> Statistik</i></h5>
+                </div>
+                <div class="modal-body">
+                    <h5 id="statistic-title"></h5>
 
+                    <div class="d-flex align-items-center">
+                        <span class="mr-3" id="statistic-subtitle">Your Text Here</span>
+                        <button class="btn btn-light btn-sm btn-statistic" id="statistic-last-week"><i class="bi bi-arrow-left-circle-fill"></i></button>
+                        <button class="btn btn-light btn-sm btn-statistic" id="statistic-next-week"><i class="bi bi-arrow-right-circle-fill"></i></button>
+                    </div>
+                    
+                    <canvas id="myChart"></canvas>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary close-modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="js/scripts.js"></script>
 </body>
 </html>

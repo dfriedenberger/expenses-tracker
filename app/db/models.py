@@ -4,6 +4,7 @@ from sqlalchemy.dialects.sqlite import JSON
 
 Base = declarative_base()
 
+
 class Expense(Base):
     __tablename__ = "expenses"
 

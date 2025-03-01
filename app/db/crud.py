@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.orm import Session
 from . import models, schemas
 
@@ -14,8 +15,16 @@ def create_expense(db: Session, expense: schemas.ExpenseCreate):
     return db_expense
 
 
-def get_expenses(db: Session):
-    return db.query(models.Expense).all()
+def get_expenses(db: Session, from_date: date = None, to_date: date = None):
+    query = db.query(models.Expense)
+
+    # Falls "von"- oder "bis"-Datum angegeben wurde, Filter anwenden
+    if from_date:
+        query = query.filter(models.Expense.date >= from_date)
+    if to_date:
+        query = query.filter(models.Expense.date <= to_date)
+
+    return query.all()
 
 
 def get_expense(db: Session, expense_id: int):

@@ -28,6 +28,7 @@ class Expense(ExpenseBase):
 
 
 class Tag(BaseModel):
+    tag_typ: str
     id: str
     name: str
 
