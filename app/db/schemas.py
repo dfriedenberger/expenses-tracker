@@ -24,7 +24,7 @@ class Expense(ExpenseBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Tag(BaseModel):
