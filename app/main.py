@@ -149,4 +149,4 @@ def delete_expense(expense_id: int, db: Session = Depends(get_db)):
     return crud.delete_expense(db=db, expense_id=expense_id)
 
 
-app.mount("/", StaticFiles(directory="static"), name="static")
+app.mount("/", StaticFiles(directory="static",html = True), name="static")
