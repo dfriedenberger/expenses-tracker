@@ -25,6 +25,7 @@ $(document).ready(function () {
             expense.tag_categories = []
             expense.tag_tags       = []
             expense.tag_persons    = []
+            expense.tag_locations    = []
 
             expense.tags.forEach(tag => {
                 let tag_config = tags.find(x => x.id === tag)
@@ -35,6 +36,8 @@ $(document).ready(function () {
                     expense.tag_persons.push(tag_config.name)
                 if (tag_config.tag_typ == "tag")
                     expense.tag_tags.push(tag_config.name)
+                if (tag_config.tag_typ == "location")
+                    expense.tag_locations.push(tag_config.name)
             })
 
            
@@ -152,6 +155,12 @@ $(document).ready(function () {
             "disable_class": "btn-outline-info",
             "enable_icon": "bi-shield-minus" ,
             "disable_icon": "bi-shield-plus"
+        },
+        "location" : {
+            "enable_class": "btn-warning",
+            "disable_class": "btn-outline-warning",
+            "enable_icon": "bi-house-dash-fill",
+            "disable_icon": "bi-house-add-fill"
         },
     }
 

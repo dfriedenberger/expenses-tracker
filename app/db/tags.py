@@ -12,9 +12,20 @@ TAG_LIST = [
         {"tag_typ": "person", "id": "oscar", "name": "Oscar"},
         {"tag_typ": "person", "id": "dirk", "name": "Dirk"},
 
+        {"tag_typ": "location", "id": "waldaschaff", "name": "Waldaschaff"},
+        {"tag_typ": "location", "id": "potsdam", "name": "Potsdam"},
+        {"tag_typ": "location", "id": "torrevieja", "name": "Torrevija"},
+
         {"tag_typ": "tag", "id": "sport", "name": "Sport"},
         {"tag_typ": "tag", "id": "versicherung", "name": "Versicherung"},
         {"tag_typ": "tag", "id": "auto", "name": "Auto"},
+        {"tag_typ": "tag", "id": "gastronomie", "name": "Gastronomie"},
+        {"tag_typ": "tag", "id": "gesundheit", "name": "Gesundheit"},
+        {"tag_typ": "tag", "id": "bildung", "name": "Bildung"},
+        {"tag_typ": "tag", "id": "freizeit", "name": "Freizeit"},
+        {"tag_typ": "tag", "id": "technologie", "name": "Technologie"},
+        {"tag_typ": "tag", "id": "haushalt", "name": "Haushalt"},
+        {"tag_typ": "tag", "id": "geschenke", "name": "Geschenke"},
     ]
 
 
