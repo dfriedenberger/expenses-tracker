@@ -68,13 +68,19 @@ $(document).ready(function () {
 
     function currency_init_list() {
 
-        $.get('/currency/', function (data) {
-            
-            $('#currency').empty();
-            data.forEach(currency => {
-                $('#currency').append($('<option>', {value: currency.iso4217, text:currency.symbol + ' - ' + currency.name}));
-            })
-        })
+
+        return new Promise((resolve, reject) => {
+            $.get('/currency/', function (data) {
+                $('#currency').empty();
+                data.forEach(currency => {
+                    $('#currency').append($('<option>', {value: currency.iso4217, text:currency.symbol + ' - ' + currency.name}));
+                })
+                resolve(data);
+            }).fail(function (error) {
+                reject(error);
+            });
+          });
+
     }
 
     $(document).on('click', '#currency-form', function (ev) {
@@ -89,7 +95,7 @@ $(document).ready(function () {
 
         $.get('/currency/', function (currencyList) {
             price_eur = currency_calculate(price_currency, currency, currencyList)
-            console.log(price_currency, currency, "=>" , price_eur)
+            // console.log(price_currency, currency, "=>" , price_eur)
 
             $("#price").val(price_eur)
             $("#currency-form-group").slideUp()
@@ -291,7 +297,7 @@ $(document).ready(function () {
     });
 
     // Handle new button click
-    $(document).on('click', '.btn-new', function () {
+    $(document).on('click', '.btn-new', async function () {
 
         $("#expenseModalLabel").text("Neue Ausgabe")
 
@@ -303,8 +309,10 @@ $(document).ready(function () {
 
         tags_set_value([])
 
-        currency_init_list()
+        await currency_init_list()
         $("#currency").val("")
+        $("#price_currency").val("")
+        $("#currency-form-group").hide(0)
 
         $('#confirm-save-btn').removeData( "id" );
         $('#expenseModal').modal('show');
@@ -318,7 +326,7 @@ $(document).ready(function () {
         $.ajax({
             url: `/expenses/${expenseId}`,
             type: 'GET',
-            success: function (data) {
+            success: async function (data) {
                 console.log(data)
                 $("#expenseModalLabel").text("Bearbeiten")
                 $("#title").val(data.title)
@@ -326,9 +334,15 @@ $(document).ready(function () {
                 $("#date").val(data.date)
 
                 tags_set_value(data.tags)
-                currency_init_list()
+                await currency_init_list()
                 $("#currency").val(data.currency)
                 $("#price_currency").val(data.price_currency)
+
+                
+               
+                $("#currency-form-group").hide(0)
+        
+
 
                 $('#confirm-save-btn').data('id', expenseId);
                 $('#expenseModal').modal('show');
