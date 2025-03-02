@@ -63,6 +63,21 @@
     </script>
     
 
+    <script id="expense-short-template" type="text/x-handlebars-template">
+        <div class="d-flex justify-content-between align-items-start">
+            <p class="mb-1">{{date}}</p>
+            <p class="mb-1">{{title}}</p>
+            <p class="mb-1">{{price}} €</p>
+        </div>
+    </script>
+    <script id="expense-sum-template" type="text/x-handlebars-template">
+        <hr />
+        <div class="d-flex justify-content-between align-items-start">
+            <p class="mb-1">Summe</p>
+            <p class="mb-1">{{sum}} €</p>
+        </div>
+    </script>
+
     <!-- Tags -->
     <script id="tags-template" type="text/x-handlebars-template">
         <button class="btn btn-sm tag" id="{{id}}" data-tag-typ="{{tag_typ}}" type="button">{{name}} <i class="bi"></i></button>
@@ -147,6 +162,9 @@
                     </div>
                     
                     <canvas id="myChart"></canvas>
+
+                    <div id="statistic-details"></div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary close-modal">Ok</button>

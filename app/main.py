@@ -1,6 +1,5 @@
 from typing import List
 from datetime import datetime
-import locale
 
 from fastapi import FastAPI, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,7 +13,7 @@ from db.util import get_env_variable, get_week_range, get_iso_weeks_in_year, get
 from db import models, schemas
 from db import crud
 from db.database import engine, SessionLocal
-from db.expense_stats import sum_expenses_by_category
+from db.expense_stats import sum_expenses, cluster_expenses_by_category
 from db.tags import TAG_LIST, tags_get_categories, tags_get_limits
 
 # Create database tables
@@ -120,6 +119,10 @@ def read_statistic(
 
     cat_ids, cat_names = tags_get_categories()
 
+    expenses_cluster = cluster_expenses_by_category(expenses_for_kw, cat_ids)
+
+    data = [sum_expenses(e) for e in expenses_cluster]
+
     return {
         "title": f'Auswertung der KW {week}/{year}',
         "subtitle": f'{get_week_day(from_date)}, {from_date.strftime("%d.%m.%Y")} - {get_week_day(to_date)}, {to_date.strftime("%d.%m.%Y")}',
@@ -132,8 +135,9 @@ def read_statistic(
         "dataset_label": "Ausgaben (€)",
         "suggestedMax": 400,
         "labels": cat_names,
-        "data": sum_expenses_by_category(expenses_for_kw, cat_ids),
-        "limits": tags_get_limits(cat_ids)
+        "data": data,
+        "limits": tags_get_limits(cat_ids),
+        "expenses": expenses_cluster,
     }
 
 

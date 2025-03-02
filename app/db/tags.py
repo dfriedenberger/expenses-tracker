@@ -31,7 +31,7 @@ TAG_LIST = [
 
 _category_limits = {
     "lebensmittel": 200,
-    "tanken": 100,
+    "tanken": 50,
     "sonstiges": 100
 }
 

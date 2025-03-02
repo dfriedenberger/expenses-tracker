@@ -16,8 +16,8 @@ $(document).ready(function () {
         const expensesList = $('#expenses-list');
         expensesList.empty();
 
-        var expenseSource = $("#expense-template").html();
-        var expenseTemplate = Handlebars.compile(expenseSource);
+        let expenseSource = $("#expense-template").html();
+        let expenseTemplate = Handlebars.compile(expenseSource);
 
         expenses.forEach(expense => {
 
@@ -387,6 +387,7 @@ $(document).ready(function () {
                 $("#statistic-last-week").data("week",statistic.last_week)
 
                 l = statistic.data.length
+
                 data_ist = Array(l)
                 data_rest = Array(l)
                 data_oversized = Array(l)
@@ -452,16 +453,78 @@ $(document).ready(function () {
                             }
                         },
                         responsive: true,
+                        onClick: function(c,i) {
+                            if(i.length > 0) {
+                                category_id = i[0].index
+                                //dataset_ix = i[0].datasetIndex
+                                open_statistic_category(category_id)
+                            }
+                    
+                        }
                     }
                 });
       
+
+            
+                //statistic details
+
+                const statisticDetails = $('#statistic-details');
+                statisticDetails.empty();
+        
+                let expenseSource = $("#expense-short-template").html();
+                let expenseTemplate = Handlebars.compile(expenseSource);
+                let expenseSourceSum = $("#expense-sum-template").html();
+                let expenseTemplateSum = Handlebars.compile(expenseSourceSum);
+                for(var i = 0;i < l;i++) {
+
+                    console.log(statistic.labels[i], statistic.expenses[i])
+                    statisticDetails.append("<div id='statistic-category-"+i+"' style='display:none'><h5>"+statistic.labels[i]+"</h5></div>")
+                    statistic.expenses[i].forEach(expense => {                    
+                        //Map date
+                        const date = new Date(expense.date);
+                        expense.date = date.toLocaleDateString("de-DE", { 
+                            weekday: "short", 
+                            day: "numeric", 
+                            month: "numeric", 
+                            year: "numeric"
+                        });
+
+                        console.log(expense)
+
+                        var html = expenseTemplate(expense);
+                        $("#statistic-category-"+i).append(html);
+                    });
+
+                    var html = expenseTemplateSum({"sum" : statistic.data[i] })
+                    $("#statistic-category-"+i).append(html);
+                }
+
+                
+               
+
+
 
 
 
         })
         $('#statisticModal').modal('show');
     }
+    open_statistic_category_index = -1
+    function open_statistic_category(i) {
 
+        if(open_statistic_category_index == i)
+            return;
+        
+        $("#statistic-category-"+i).slideDown();
+
+
+        if(open_statistic_category_index >= 0) {
+            $("#statistic-category-"+open_statistic_category_index).slideUp();
+        }
+        open_statistic_category_index = i
+
+
+    }
 
 
 });
