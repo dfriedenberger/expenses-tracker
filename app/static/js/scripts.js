@@ -59,7 +59,7 @@ $(document).ready(function () {
 
     //Currency
     function currency_calculate(price, currency, currencyList) {
-        cur = currencyList.find(c => c.shortcut === currency)
+        cur = currencyList.find(c => c.iso4217 === currency)
         if(cur) {
             return cur.factor * price
         }
@@ -72,7 +72,7 @@ $(document).ready(function () {
             
             $('#currency').empty();
             data.forEach(currency => {
-                $('#currency').append($('<option>', {value: currency.shortcut, text:currency.shortcut + ' - ' + currency.name}));
+                $('#currency').append($('<option>', {value: currency.iso4217, text:currency.symbol + ' - ' + currency.name}));
             })
         })
     }

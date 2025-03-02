@@ -25,7 +25,7 @@ class Expense(ExpenseBase):
 
     class Config:
         from_attributes = True
-
+        orm_mode=True
 
 class Tag(BaseModel):
     tag_typ: str
@@ -34,6 +34,7 @@ class Tag(BaseModel):
 
 
 class Currency(BaseModel):
-    shortcut: str
+    iso4217: str
+    symbol: str
     name: str
     factor: float
