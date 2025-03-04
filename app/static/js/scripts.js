@@ -495,16 +495,9 @@ $(document).ready(function () {
                         $("#statistic-category-"+i).append(html);
                     });
 
-                    var html = expenseTemplateSum({"sum" : statistic.data[i] })
+                    var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": statistic.limits[i] })
                     $("#statistic-category-"+i).append(html);
                 }
-
-                
-               
-
-
-
-
 
         })
         $('#statisticModal').modal('show');
