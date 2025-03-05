@@ -95,6 +95,11 @@ $(document).ready(function () {
         $("#currency-form-group").slideToggle()
     })
 
+    $(document).on('click', '#add-topic', function (ev) {
+        ev.preventDefault()
+        $("#add-topic-group").slideToggle()
+    })
+
     $(document).on('click', '#convert-currency', function (ev) {
         ev.preventDefault()
         price_currency = $("#price_currency").val()
@@ -234,6 +239,7 @@ $(document).ready(function () {
             price: $('#price').val(),
             date: $('#date').val(),
             tags: tags_getValues(),
+            topic: undefined,
             currency: undefined,
             price_currency: undefined
         };
@@ -243,6 +249,11 @@ $(document).ready(function () {
         {
             expense.currency = $('#currency').val()
             expense.price_currency = price_currency
+        }
+        topic = $('#topic').val()
+        if(topic)
+        {
+            expense.topic = topic 
         }
 
         
@@ -309,6 +320,7 @@ $(document).ready(function () {
         $("#expenseModalLabel").text("Neue Ausgabe")
 
         $("#title").val("")
+        $("#topic").val("")
         $("#price").val("")
 
         const todayISO = new Date().toISOString().split('T')[0];
@@ -320,7 +332,8 @@ $(document).ready(function () {
         $("#currency").val("")
         $("#price_currency").val("")
         $("#currency-form-group").hide(0)
-
+        $("#add-topic-group").hide(0)
+        
         $('#confirm-save-btn').removeData( "id" );
         $('#expenseModal').modal('show');
 
@@ -337,6 +350,7 @@ $(document).ready(function () {
                 console.log(data)
                 $("#expenseModalLabel").text("Bearbeiten")
                 $("#title").val(data.title)
+                $("#topic").val(data.topic)
                 $("#price").val(data.price)
                 $("#date").val(data.date)
 
@@ -344,12 +358,12 @@ $(document).ready(function () {
                 currency_list = await currency_init_list()
                 $("#currency").val(data.currency)
                 $("#price_currency").val(data.price_currency)
-
-                
-               
+                if(data.topic) {
+                    $("#add-topic-group").show(0);
+                } else {
+                    $("#add-topic-group").hide(0);
+                }
                 $("#currency-form-group").hide(0)
-        
-
 
                 $('#confirm-save-btn').data('id', expenseId);
                 $('#expenseModal').modal('show');

@@ -10,6 +10,7 @@ class Expense(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
+    topic = Column(String, default=None)
     price = Column(Float)
     currency = Column(String, default=None)
     price_currency = Column(Float, default=None)

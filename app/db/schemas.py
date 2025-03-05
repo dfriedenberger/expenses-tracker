@@ -5,6 +5,7 @@ from datetime import date
 
 class ExpenseBase(BaseModel):
     title: str
+    topic: Optional[str] = None
     price: float
     currency: Optional[str] = None
     price_currency: Optional[float] = None
@@ -26,6 +27,7 @@ class Expense(ExpenseBase):
     class Config:
         from_attributes = True
         orm_mode=True
+
 
 class Tag(BaseModel):
     tag_typ: str

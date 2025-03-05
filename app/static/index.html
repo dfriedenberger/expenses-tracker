@@ -58,6 +58,10 @@
                 {{#each tag_locations}}   
                     <span class="badge bg-warning"><i class="bi bi-house-fill"></i> {{this}}</span>
                 {{/each}}
+                {{#if topic}}
+                    <span class="badge bg-danger"><i class="bi bi-coin"></i> {{topic}}</span>
+                {{/if}}
+
             </div>
         </div>
     </script>
@@ -100,6 +104,11 @@
 
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" id="title" placeholder="Titel" required>
+                            <button class="btn btn-secondary" id="add-topic"><i class="bi bi-coin"></i></button>
+                        </div>
+
+                        <div class="input-group mb-3" id="add-topic-group" style="display:none;">
+                            <input type="text" class="form-control" id="topic" placeholder="Gruppe, z.B. Urlaub">
                         </div>
 
                         <div class="input-group mb-3">
