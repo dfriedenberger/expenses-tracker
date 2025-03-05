@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="dirk" id="002-1">
+        <createTable tableName="tags">
+            <column name="id" type="VARCHAR">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tag_pkey"/>
+            </column>
+            <column name="tag_type" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR"/>
+        </createTable>
+    </changeSet>
+
+
+    <!-- Changeset zum Einfügen eines Datensatzes in die Tabelle -->
+   <changeSet author="dirk" id="002-2">
+        <insert tableName="tags">
+            <column name="tag_type" value="category"/>
+            <column name="id" value="lebensmittel"/>
+            <column name="name" value="Lebensmittel"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="category"/>
+            <column name="id" value="tanken"/>
+            <column name="name" value="Tanken"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="category"/>
+            <column name="id" value="sonstiges"/>
+            <column name="name" value="Sonstiges"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="category"/>
+            <column name="id" value="urlaub"/>
+            <column name="name" value="Urlaub"/>
+        </insert>
+
+        <insert tableName="tags">
+            <column name="tag_type" value="person"/>
+            <column name="id" value="cordula"/>
+            <column name="name" value="Cordula"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="person"/>
+            <column name="id" value="bruno"/>
+            <column name="name" value="Bruno"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="person"/>
+            <column name="id" value="oscar"/>
+            <column name="name" value="Oscar"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="person"/>
+            <column name="id" value="dirk"/>
+            <column name="name" value="Dirk"/>
+        </insert>
+
+        <insert tableName="tags">
+            <column name="tag_type" value="location"/>
+            <column name="id" value="waldaschaff"/>
+            <column name="name" value="Waldaschaff"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="location"/>
+            <column name="id" value="potsdam"/>
+            <column name="name" value="Potsdam"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="location"/>
+            <column name="id" value="torrevieja"/>
+            <column name="name" value="Torrevija"/>
+        </insert>
+
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="sport"/>
+            <column name="name" value="Sport"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="versicherung"/>
+            <column name="name" value="Versicherung"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="auto"/>
+            <column name="name" value="Auto"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="gastronomie"/>
+            <column name="name" value="Gastronomie"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="gesundheit"/>
+            <column name="name" value="Gesundheit"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="bildung"/>
+            <column name="name" value="Bildung"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="freizeit"/>
+            <column name="name" value="Freizeit"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="technologie"/>
+            <column name="name" value="Technologie"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="haushalt"/>
+            <column name="name" value="Haushalt"/>
+        </insert>
+        <insert tableName="tags">
+            <column name="tag_type" value="tag"/>
+            <column name="id" value="geschenke"/>
+            <column name="name" value="Geschenke"/>
+        </insert>
+
+        <!-- Rollback: Lösche die eingefügten Daten -->
+        <rollback>
+            <delete tableName="tags">
+                <where>id IN ('lebensmittel', 'tanken', 'sonstiges', 'urlaub', 
+                            'cordula', 'bruno', 'oscar', 'dirk',
+                            'waldaschaff', 'potsdam', 'torrevieja',
+                            'sport', 'versicherung', 'auto', 'gastronomie', 
+                            'gesundheit', 'bildung', 'freizeit', 'technologie', 
+                            'haushalt', 'geschenke')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

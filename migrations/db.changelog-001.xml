@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="dirk" id="001-1">
+        <createTable tableName="expenses">
+            <column autoIncrement="true" name="id" startWith="11" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="expenses_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR"/>
+            <column name="price" type="FLOAT8"/>
+            <column name="currency" type="VARCHAR"/>
+            <column name="price_currency" type="FLOAT8"/>
+            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="tags" type="JSON"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="dirk" id="001-2">
+        <createIndex indexName="ix_expenses_title" tableName="expenses">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

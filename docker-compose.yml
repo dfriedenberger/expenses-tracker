@@ -33,6 +33,18 @@ services:
     networks:
       - app-network
 
+  liquibase:
+    image: liquibase/liquibase
+    restart: "no"
+    volumes:
+      - ./migrations:/liquibase/migrations
+      - ./liquibase.properties:/liquibase/liquibase.properties
+    depends_on:
+      - db
+    command: ["sh", "-c", "tail -f /dev/null"]  # Hält den Container offen
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

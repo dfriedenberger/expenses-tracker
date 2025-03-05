@@ -15,3 +15,12 @@ class Expense(Base):
     price_currency = Column(Float, default=None)
     date = Column(DateTime)
     tags = Column(JSON)
+
+
+class Tag(Base):
+    __tablename__ = "tags"
+
+    id = Column(String, primary_key=True, index=True)
+    tag_type = Column(String)
+    name = Column(String)
+

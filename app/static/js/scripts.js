@@ -31,14 +31,14 @@ $(document).ready(function () {
 
             expense.tags.forEach(tag => {
                 let tag_config = tags.find(x => x.id === tag)
-
-                if (tag_config.tag_typ == "category")
+                console.log(tag, tag_config)
+                if (tag_config.tag_type == "category")
                     expense.tag_categories.push(tag_config.name)
-                if (tag_config.tag_typ == "person")
+                if (tag_config.tag_type == "person")
                     expense.tag_persons.push(tag_config.name)
-                if (tag_config.tag_typ == "tag")
+                if (tag_config.tag_type == "tag")
                     expense.tag_tags.push(tag_config.name)
-                if (tag_config.tag_typ == "location")
+                if (tag_config.tag_type == "location")
                     expense.tag_locations.push(tag_config.name)
             })
 
@@ -121,12 +121,12 @@ $(document).ready(function () {
             var source = $("#tags-template").html();
             var template = Handlebars.compile(source);
     
-            let last_tag_typ = undefined
+            let last_tag_type = undefined
             data.forEach(tag => {
 
-                if (last_tag_typ && last_tag_typ != tag.tag_typ)
+                if (last_tag_type && last_tag_type != tag.tag_type)
                     tagList.append("<hr />");
-                last_tag_typ = tag.tag_typ
+                last_tag_type = tag.tag_type
 
                 var html = template(tag);
                 tagList.append(html);
@@ -179,8 +179,8 @@ $(document).ready(function () {
     }
 
     function tag_enable(tag) {
-        tag_typ = $("#"+tag).data("tag-typ")
-        config = tag_configuration[tag_typ]
+        tag_type = $("#"+tag).data("tag-typ")
+        config = tag_configuration[tag_type]
 
         $("#"+tag).removeClass(config["disable_class"])
         $("#"+tag).addClass(config["enable_class"])
@@ -190,8 +190,8 @@ $(document).ready(function () {
     }
 
     function tag_disable(tag) {
-        tag_typ = $("#"+tag).data("tag-typ")
-        config = tag_configuration[tag_typ]
+        tag_type = $("#"+tag).data("tag-typ")
+        config = tag_configuration[tag_type]
 
         $("#"+tag).removeClass(config["enable_class"])
         $("#"+tag).addClass(config["disable_class"])

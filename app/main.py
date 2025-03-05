@@ -10,14 +10,13 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.orm import Session
 
 from db.util import get_env_variable, get_week_range, get_iso_weeks_in_year, get_week_day
-from db import models, schemas
+from db import schemas
 from db import crud
-from db.database import engine, SessionLocal
+from db.database import SessionLocal
 from db.expense_stats import sum_expenses, cluster_expenses_by_category
-from db.tags import TAG_LIST, tags_get_categories, tags_get_limits
 
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
+# Create database tables, is controled by liqui base
+# models.Base.metadata.create_all(bind=engine)
 
 # Basic Authentication
 security = HTTPBasic()
@@ -58,9 +57,6 @@ def get_db():
         db.close()
 
 
-@app.get("/tags/", response_model=List[schemas.Tag])
-def read_tags():
-    return TAG_LIST
 
 
 @app.get("/currency/", response_model=List[schemas.Currency])
@@ -117,11 +113,19 @@ def read_statistic(
 
     expenses_for_kw = crud.get_expenses(db, from_date, to_date)
 
-    cat_ids, cat_names = tags_get_categories()
+    categories = crud.get_tags(db, tag_type="category")
+    cat_ids = [tag.id for tag in categories]
+    cat_names = [tag.name for tag in categories]
 
     expenses_cluster = cluster_expenses_by_category(expenses_for_kw, cat_ids)
 
     data = [sum_expenses(e) for e in expenses_cluster]
+
+    _category_limits = {
+        "lebensmittel": 200,
+        "tanken": 50,
+        "sonstiges": 100
+    }
 
     return {
         "title": f'Auswertung der KW {week}/{year}',
@@ -136,11 +140,20 @@ def read_statistic(
         "suggestedMax": 400,
         "labels": cat_names,
         "data": data,
-        "limits": tags_get_limits(cat_ids),
+        "limits": [_category_limits.get(category, 0.0) for category in cat_ids],
         "expenses": expenses_cluster,
     }
 
 
+# Tag
+@app.get("/tags/", response_model=List[schemas.Tag])
+def read_tags(db: Session = Depends(get_db)):
+    tags = crud.get_tags(db)
+    print(tags)
+    return tags
+
+
+# Expenses
 @app.post("/expenses/", response_model=schemas.Expense)
 def create_expense(expense: schemas.ExpenseCreate, db: Session = Depends(get_db)):
     return crud.create_expense(db=db, expense=expense)

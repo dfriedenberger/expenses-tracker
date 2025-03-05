@@ -25,13 +25,20 @@ class Expense(ExpenseBase):
 
     class Config:
         from_attributes = True
-        orm_mode=True
+        orm_mode = True
 
 
-class Tag(BaseModel):
-    tag_typ: str
+class TagBase(BaseModel):
+    tag_type: str
     id: str
     name: str
+
+
+class Tag(TagBase):
+
+    class Config:
+        from_attributes = True
+        orm_mode = True
 
 
 class Currency(BaseModel):

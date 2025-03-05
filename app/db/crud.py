@@ -3,12 +3,17 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
+def get_tags(db: Session, tag_type: str = None):
+    query = db.query(models.Tag)
+
+    # Filter
+    if tag_type:
+        query = query.filter(models.Tag.tag_type == tag_type)
+    return query.all()
+
+
 def create_expense(db: Session, expense: schemas.ExpenseCreate):
-    print("create_expense", expense.dict())
-
     db_expense = models.Expense(**expense.dict())
-    print("db_expense", db_expense)
-
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)
