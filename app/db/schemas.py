@@ -5,7 +5,6 @@ from datetime import date
 
 class ExpenseBase(BaseModel):
     title: str
-    topic: Optional[str] = None
     price: float
     currency: Optional[str] = None
     price_currency: Optional[float] = None
