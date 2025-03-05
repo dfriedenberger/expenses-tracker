@@ -35,7 +35,7 @@
                 <h5 class="mb-1">
                     {{title}} - {{price}} €
                     {{#if price_currency}}
-                    ({{price_currency}} {{currency}})
+                    ({{price_currency}} {{symbol_currency}})
                     {{/if}}
 
                 </h5>
@@ -104,7 +104,7 @@
 
                         <div class="input-group mb-3">
                             <input type="number" step=".1" class="form-control" placeholder="Preis" aria-label="Preis" id="price" required>
-                            <input type="button" class="btn btn-secondary" id="currency-form" value="€">
+                            <button class="btn btn-secondary" id="currency-form"><i class="bi bi-currency-exchange"></i></button>
                         </div>
 
                         <div class="input-group mb-3" id="currency-form-group" style="display:none;">

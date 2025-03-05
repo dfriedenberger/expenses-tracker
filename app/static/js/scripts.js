@@ -4,15 +4,17 @@ $(document).ready(function () {
     
     // Fetch expenses from the backend
     function fetchExpenses() {
-        $.get('/tags/', function (tags) {
-            $.get('/expenses/', function (data) {
-                renderExpenses(data, tags);
+        $.get('/currency/', function (currency_list) {
+            $.get('/tags/', function (tags) {
+                $.get('/expenses/', function (data) {
+                    renderExpenses(data, tags, currency_list);
+                })
             })
         })
     }
 
     // Render expenses list
-    function renderExpenses(expenses, tags) {
+    function renderExpenses(expenses, tags, currency_list) {
         const expensesList = $('#expenses-list');
         expensesList.empty();
 
@@ -49,6 +51,11 @@ $(document).ready(function () {
                 month: "numeric", 
                 year: "numeric"
             });
+
+            //Map currency
+            // get symbol of iso4217 currency
+            if(expense.currency)
+                expense.symbol_currency = currency_list.filter((c) => c.iso4217 == expense.currency).map((c) => c.symbol)[0];
 
             var html = expenseTemplate(expense);
             expensesList.append(html);
@@ -334,7 +341,7 @@ $(document).ready(function () {
                 $("#date").val(data.date)
 
                 tags_set_value(data.tags)
-                await currency_init_list()
+                currency_list = await currency_init_list()
                 $("#currency").val(data.currency)
                 $("#price_currency").val(data.price_currency)
 
