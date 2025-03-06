@@ -57,31 +57,6 @@ def get_db():
         db.close()
 
 
-
-
-@app.get("/currency/", response_model=List[schemas.Currency])
-def read_currency():
-    return [
-        {"iso4217": "DKK", "name": "Dänische Krone", "symbol": "kr", "factor": 0.13},
-        {"iso4217": "CHF", "name": "Schweizer Franken", "symbol": "CHF", "factor": 1.04},
-        {"iso4217": "NOK", "name": "Norwegische Krone", "symbol": "kr", "factor": 0.087},
-        {"iso4217": "SEK", "name": "Schwedische Krone", "symbol": "kr", "factor": 0.089},
-        {"iso4217": "GBP", "name": "Britisches Pfund", "symbol": "£", "factor": 1.17},
-        {"iso4217": "PLN", "name": "Polnischer Złoty", "symbol": "zł", "factor": 0.23},
-        {"iso4217": "CZK", "name": "Tschechische Krone", "symbol": "Kč", "factor": 0.04},
-        {"iso4217": "BGN", "name": "Bulgarischer Lew", "symbol": "лв", "factor": 0.51},
-        {"iso4217": "ISK", "name": "Isländische Krone", "symbol": "kr", "factor": 0.0066},
-        {"iso4217": "HUF", "name": "Ungarischer Forint", "symbol": "Ft", "factor": 0.0026},
-        {"iso4217": "RON", "name": "Rumänischer Leu", "symbol": "lei", "factor": 0.20},
-        {"iso4217": "RSD", "name": "Serbischer Dinar", "symbol": "дин", "factor": 0.0085},
-        {"iso4217": "UAH", "name": "Ukrainische Hrywnja", "symbol": "₴", "factor": 0.025},
-        {"iso4217": "MDL", "name": "Moldauischer Leu", "symbol": "L", "factor": 0.052},
-        {"iso4217": "GEL", "name": "Georgischer Lari", "symbol": "₾", "factor": 0.35},
-        {"iso4217": "ALL", "name": "Albanischer Lek", "symbol": "Lek", "factor": 0.0094},
-        {"iso4217": "MKD", "name": "Mazedonischer Denar", "symbol": "ден", "factor": 0.016},
-    ]
-
-
 @app.get("/util/kw/")
 def get_kw():
     year, week, _ = datetime.today().isocalendar()
@@ -148,9 +123,18 @@ def read_statistic(
 # Tag
 @app.get("/tags/", response_model=List[schemas.Tag])
 def read_tags(db: Session = Depends(get_db)):
-    tags = crud.get_tags(db)
-    print(tags)
-    return tags
+    return crud.get_tags(db)
+
+
+@app.post("/tags/", response_model=schemas.Tag)
+def create_tag(tag: schemas.TagCreate, db: Session = Depends(get_db)):
+    return crud.create_tag(db=db, tag=tag)
+
+
+# Currency
+@app.get("/currencies/", response_model=List[schemas.Currency])
+def read_currencies(db: Session = Depends(get_db)):
+    return crud.get_currencies(db)
 
 
 # Expenses

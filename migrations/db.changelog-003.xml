@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="003-1" author="dirk">
+        <createTable tableName="currencies">
+            <column name="iso4217" type="VARCHAR(10)">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="symbol" type="VARCHAR(10)"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="factor" type="FLOAT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="003-2" author="dirk">
+        <insert tableName="currencies">
+            <column name="iso4217" value="DKK"/>
+            <column name="name" value="Dänische Krone"/>
+            <column name="symbol" value="kr"/>
+            <column name="factor" value="0.13"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="CHF"/>
+            <column name="name" value="Schweizer Franken"/>
+            <column name="symbol" value="CHF"/>
+            <column name="factor" value="1.04"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="NOK"/>
+            <column name="name" value="Norwegische Krone"/>
+            <column name="symbol" value="kr"/>
+            <column name="factor" value="0.087"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="SEK"/>
+            <column name="name" value="Schwedische Krone"/>
+            <column name="symbol" value="kr"/>
+            <column name="factor" value="0.089"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="GBP"/>
+            <column name="name" value="Britisches Pfund"/>
+            <column name="symbol" value="£"/>
+            <column name="factor" value="1.17"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="PLN"/>
+            <column name="name" value="Polnischer Złoty"/>
+            <column name="symbol" value="zł"/>
+            <column name="factor" value="0.23"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="CZK"/>
+            <column name="name" value="Tschechische Krone"/>
+            <column name="symbol" value="Kč"/>
+            <column name="factor" value="0.04"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="BGN"/>
+            <column name="name" value="Bulgarischer Lew"/>
+            <column name="symbol" value="лв"/>
+            <column name="factor" value="0.51"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="ISK"/>
+            <column name="name" value="Isländische Krone"/>
+            <column name="symbol" value="kr"/>
+            <column name="factor" value="0.0066"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="HUF"/>
+            <column name="name" value="Ungarischer Forint"/>
+            <column name="symbol" value="Ft"/>
+            <column name="factor" value="0.0026"/>
+        </insert>
+        <insert tableName="currencies">
+            <column name="iso4217" value="RON"/>
+            <column name="name" value="Rumänischer Leu"/>
+            <column name="symbol" value="lei"/>
+            <column name="factor" value="0.20"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="currencies"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

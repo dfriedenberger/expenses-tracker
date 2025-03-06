@@ -34,6 +34,10 @@ class TagBase(BaseModel):
     name: str
 
 
+class TagCreate(TagBase):
+    pass
+
+
 class Tag(TagBase):
 
     class Config:
@@ -41,8 +45,15 @@ class Tag(TagBase):
         orm_mode = True
 
 
-class Currency(BaseModel):
+class CurrencyBase(BaseModel):
     iso4217: str
     symbol: str
     name: str
     factor: float
+
+
+class Currency(CurrencyBase):
+
+    class Config:
+        from_attributes = True
+        orm_mode = True

@@ -83,11 +83,13 @@
             <column name="id" value="sport"/>
             <column name="name" value="Sport"/>
         </insert>
+
         <insert tableName="tags">
             <column name="tag_type" value="tag"/>
             <column name="id" value="versicherung"/>
             <column name="name" value="Versicherung"/>
         </insert>
+        
         <insert tableName="tags">
             <column name="tag_type" value="tag"/>
             <column name="id" value="auto"/>
@@ -103,26 +105,19 @@
             <column name="id" value="gesundheit"/>
             <column name="name" value="Gesundheit"/>
         </insert>
+
         <insert tableName="tags">
             <column name="tag_type" value="tag"/>
             <column name="id" value="bildung"/>
             <column name="name" value="Bildung"/>
         </insert>
-        <insert tableName="tags">
-            <column name="tag_type" value="tag"/>
-            <column name="id" value="freizeit"/>
-            <column name="name" value="Freizeit"/>
-        </insert>
+
         <insert tableName="tags">
             <column name="tag_type" value="tag"/>
             <column name="id" value="technologie"/>
             <column name="name" value="Technologie"/>
         </insert>
-        <insert tableName="tags">
-            <column name="tag_type" value="tag"/>
-            <column name="id" value="haushalt"/>
-            <column name="name" value="Haushalt"/>
-        </insert>
+
         <insert tableName="tags">
             <column name="tag_type" value="tag"/>
             <column name="id" value="geschenke"/>
@@ -131,14 +126,7 @@
 
         <!-- Rollback: Lösche die eingefügten Daten -->
         <rollback>
-            <delete tableName="tags">
-                <where>id IN ('lebensmittel', 'tanken', 'sonstiges', 'urlaub', 
-                            'cordula', 'bruno', 'oscar', 'dirk',
-                            'waldaschaff', 'potsdam', 'torrevieja',
-                            'sport', 'versicherung', 'auto', 'gastronomie', 
-                            'gesundheit', 'bildung', 'freizeit', 'technologie', 
-                            'haushalt', 'geschenke')</where>
-            </delete>
+            <delete tableName="tags"/>
         </rollback>
     </changeSet>
 </databaseChangeLog>

@@ -22,6 +22,7 @@
     <div class="container">
         <h1 class="mt-5">Haushaltsausgaben-Tracker</h1>
         <button class="btn btn-primary my-3 btn-new"><i class="bi bi-plus-circle"></i> Ausgabe</button>
+        <button class="btn btn-primary my-3 btn-new-tag"><i class="bi bi-plus-circle"></i> Tag</button>
         <button class="btn btn-primary my-3 btn-statistic"><i class="bi bi-file-earmark-excel-fill"></i> Auswertung</button>
         <div id="expenses-list">
             <!-- Expenses will be listed here -->
@@ -57,6 +58,12 @@
                 {{/each}}
                 {{#each tag_locations}}   
                     <span class="badge bg-warning"><i class="bi bi-house-fill"></i> {{this}}</span>
+                {{/each}}
+                {{#each tag_vacations}}   
+                    <span class="badge bg-danger"><i class="bi bi-suitcase-lg-fill"></i> {{this}}</span>
+                {{/each}}
+                {{#each tag_unknowns}}  
+                    <span class="badge bg-secondary"><i class="bi bi-exclamation-triangle-fill"></i> {{this}}</span>
                 {{/each}}
 
             </div>
@@ -151,6 +158,45 @@
             </div>
         </div>
     </div>
+
+    <!-- Tag Modal -->
+    <div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tagModalLabel">Neuer Eintrag</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="tag-form">
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="tag-name" placeholder="Name" required>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="tag-id" placeholder="Id" disabled>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <select class="form-select" id="tag-type">
+                                <option value="category">Kategorie</option>
+                                <option value="tag">Tag</option>
+                                <option value="person">Person</option>
+                                <option value="location">Ort</option>
+                                <option value="vacation" selected>Urlaub</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-modal">Abbrechen</button>
+                    <button type="submit" form="tag-form" class="btn btn-primary">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Statistic  Modal -->
     <div class="modal fade" id="statisticModal" tabindex="-1" aria-labelledby="statisticModalLabel" aria-hidden="true">

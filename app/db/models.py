@@ -24,3 +24,11 @@ class Tag(Base):
     tag_type = Column(String)
     name = Column(String)
 
+
+class Currency(Base):
+    __tablename__ = "currencies"
+
+    iso4217 = Column(String, primary_key=True, index=True)
+    symbol = Column(String)
+    name = Column(String)
+    factor = Column(Float)

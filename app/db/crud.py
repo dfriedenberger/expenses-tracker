@@ -12,6 +12,18 @@ def get_tags(db: Session, tag_type: str = None):
     return query.all()
 
 
+def create_tag(db: Session, tag: schemas.TagCreate):
+    db_tag = models.Tag(**tag.dict())
+    db.add(db_tag)
+    db.commit()
+    db.refresh(db_tag)
+    return db_tag
+
+
+def get_currencies(db: Session):
+    return db.query(models.Currency).all()
+
+
 def create_expense(db: Session, expense: schemas.ExpenseCreate):
     db_expense = models.Expense(**expense.dict())
     db.add(db_expense)

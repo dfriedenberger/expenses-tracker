@@ -4,7 +4,7 @@ $(document).ready(function () {
     
     // Fetch expenses from the backend
     function fetchExpenses() {
-        $.get('/currency/', function (currency_list) {
+        $.get('/currencies/', function (currency_list) {
             $.get('/tags/', function (tags) {
                 $.get('/expenses/', function (data) {
                     renderExpenses(data, tags, currency_list);
@@ -27,11 +27,20 @@ $(document).ready(function () {
             expense.tag_categories = []
             expense.tag_tags       = []
             expense.tag_persons    = []
-            expense.tag_locations    = []
+            expense.tag_locations  = []
+            expense.tag_vacations  = []
+            expense.tag_unknowns    = []
 
             expense.tags.forEach(tag => {
                 let tag_config = tags.find(x => x.id === tag)
                 console.log(tag, tag_config)
+
+                if(!tag_config)
+                {
+                    console.log("Tag not found", tag)
+                    expense.tag_unknowns.push(tag)
+                    return
+                }
                 if (tag_config.tag_type == "category")
                     expense.tag_categories.push(tag_config.name)
                 if (tag_config.tag_type == "person")
@@ -40,9 +49,13 @@ $(document).ready(function () {
                     expense.tag_tags.push(tag_config.name)
                 if (tag_config.tag_type == "location")
                     expense.tag_locations.push(tag_config.name)
+                if (tag_config.tag_type == "vacation")
+                    expense.tag_vacations.push(tag_config.name)
             })
 
            
+            console.log(expense.tag_unknowns)
+
             //Map date
             const date = new Date(expense.date);
             expense.date = date.toLocaleDateString("de-DE", { 
@@ -77,7 +90,7 @@ $(document).ready(function () {
 
 
         return new Promise((resolve, reject) => {
-            $.get('/currency/', function (data) {
+            $.get('/currencies/', function (data) {
                 $('#currency').empty();
                 data.forEach(currency => {
                     $('#currency').append($('<option>', {value: currency.iso4217, text:currency.symbol + ' - ' + currency.name}));
@@ -101,7 +114,7 @@ $(document).ready(function () {
         price_currency = $("#price_currency").val()
         currency = $("#currency").val()
 
-        $.get('/currency/', function (currencyList) {
+        $.get('/currencies/', function (currencyList) {
             price_eur = currency_calculate(price_currency, currency, currencyList)
             // console.log(price_currency, currency, "=>" , price_eur)
 
@@ -175,6 +188,12 @@ $(document).ready(function () {
             "disable_class": "btn-outline-warning",
             "enable_icon": "bi-house-dash-fill",
             "disable_icon": "bi-house-add-fill"
+        },
+        "vacation" : {
+            "enable_class": "btn-danger",
+            "disable_class": "btn-outline-danger",
+            "enable_icon": "bi-shield-minus",
+            "disable_icon": "bi-shield-plus"
         },
     }
 
@@ -353,6 +372,44 @@ $(document).ready(function () {
 
     });
 
+    //handle New tag Button
+    $(document).on('click', '.btn-new-tag', async function () {
+
+        $("#tagModalLabel").text("Neuer Tag")
+
+        $("#tag-name").val("")
+        //handle input in field name
+        $('#tag-name').on('input', function() {
+            let n  = $(this).val()
+            $("#tag-id").val(n.toLowerCase().replace(/ /g, "_"))
+        })
+
+        $("#tag-type").val("vacation")
+        $('#tagModal').modal('show');
+
+    })
+
+    //handle save tag Button
+    $('#tag-form').on('submit', function (e) {
+        e.preventDefault();
+        const tag = {
+            name: $('#tag-name').val(),
+            id: $('#tag-id').val(),
+            tag_type: $('#tag-type').val(),
+        };
+
+        $.ajax({
+            type: "POST",  
+            url: "/tags/",
+            data: JSON.stringify(tag),  
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(data){
+                $('#tagModal').modal('hide');
+            },
+        });
+
+    })
 
     //Statistics
     let myChart;
