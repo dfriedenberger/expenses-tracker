@@ -696,7 +696,7 @@ $(document).ready(function () {
             });
 
             var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": statistic.limits[i], "limittext" : limittext })
-            $("#statistic-category-"+i).append(html);
+            $("#statistic-category-"+statisticClass+"-"+i).append(html);
         }
         open_statistic_category_index = -1
     }
