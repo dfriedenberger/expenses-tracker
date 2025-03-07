@@ -603,7 +603,7 @@ $(document).ready(function () {
             labels.push("Sparen")
 
             let COLORS = ['#1E90FF', '#32CD32', '#FF6347', '#FFA500', '#8A2BE2', '#FFD700', '#00CED1', '#FF69B4', '#ADFF2F', '#FF4500'];
-            let colors = COLORS.slice(statistic.data.length)
+            let colors = COLORS.slice(0, statistic.data.length)
             colors.push("#aaaaaa") //grau für sparen
 
             monthChart = new Chart(ctx, {
