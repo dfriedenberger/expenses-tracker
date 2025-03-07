@@ -593,6 +593,7 @@ $(document).ready(function () {
             if(sparen < 0)
                 sparen = 0; 
 
+            sparen = Math.round(sparen * 100) / 100;
             let data = statistic.data.slice()
             data.push(sparen)
 
