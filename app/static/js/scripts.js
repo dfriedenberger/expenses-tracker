@@ -589,6 +589,8 @@ $(document).ready(function () {
                 summe += statistic.data[i];
             summe = Math.round(summe * 100) / 100;
 
+
+
             let sparen = statistic.limit - summe;
             if(sparen < 0)
                 sparen = 0; 
@@ -600,13 +602,17 @@ $(document).ready(function () {
             let labels = statistic.labels.slice()
             labels.push("Sparen")
 
+            let COLORS = ['#1E90FF', '#32CD32', '#FF6347', '#FFA500', '#8A2BE2', '#FFD700', '#00CED1', '#FF69B4', '#ADFF2F', '#FF4500'];
+            let colors = COLORS.slice(statistic.data.length)
+            colors.push("#aaaaaa") //grau für sparen
+
             monthChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: labels,
                     datasets: [{
                         data: data,
-                        backgroundColor: ['#1E90FF', '#32CD32', '#FF6347', '#FFA500', '#aaaaaa']
+                        backgroundColor: colors,
                     }]
                 },
                 options: {
