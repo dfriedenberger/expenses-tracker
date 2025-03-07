@@ -583,29 +583,26 @@ $(document).ready(function () {
                 monthChart.destroy();
             }
 
-            // statistic.data summieren und summe runden
-            let summe = 0;
-            for(var i = 0;i < statistic.data.length;i++)
-                summe += statistic.data[i];
-            summe = Math.round(summe * 100) / 100;
-
-
-
-            let sparen = statistic.limit - summe;
-            if(sparen < 0)
-                sparen = 0; 
-
-            sparen = Math.round(sparen * 100) / 100;
+          
             let data = statistic.data.slice()
-            data.push(sparen)
-
             let labels = statistic.labels.slice()
-            labels.push("Sparen")
-
             let COLORS = ['#1E90FF', '#32CD32', '#FF6347', '#FFA500', '#8A2BE2', '#FFD700', '#00CED1', '#FF69B4', '#ADFF2F', '#FF4500'];
             let colors = COLORS.slice(0, statistic.data.length)
-            colors.push("#aaaaaa") //grau für sparen
 
+            let prognose = Math.round(statistic.prognose * 100) / 100;
+            if(statistic.prognose > 0)
+            {
+                data.push(statistic.prognose)
+                labels.push("Prognose")
+                colors.push("#cccccc") 
+            }
+
+            if(statistic.savings > 0)
+            {
+                data.push(statistic.savings)
+                labels.push("Sparen")
+                colors.push("#aaaaaa") 
+            }
             monthChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -648,12 +645,12 @@ $(document).ready(function () {
             }   
             var row = $('<tr>');
             row.append($('<td>').html($('<strong>').text("Summe")));
-            row.append($('<td>').text(summe + ' €'));
+            row.append($('<td>').text(statistic.sum + ' €'));
             statisticTable.append(row);
 
             $("#statistic-month-budget").text(statistic.limit + ' €');
 
-            $("#statistic-month-sparen").text(sparen + ' €');   
+            $("#statistic-month-sparen").text(statistic.savings + ' €');   
 
             //statistic details
             create_statistic_categories($('#statistic-month-details'), 'month', statistic, "Monatliches Budget")

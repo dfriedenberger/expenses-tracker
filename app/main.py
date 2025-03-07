@@ -9,11 +9,12 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from db.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month
+from db.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
 from db import schemas
 from db import crud
 from db.database import SessionLocal
 from db.expense_stats import sum_expenses, cluster_expenses_by_category
+from db.statistics import calculate_prognosis
 
 # Create database tables, is controled by liqui base
 # models.Base.metadata.create_all(bind=engine)
@@ -130,27 +131,24 @@ def read_statistic_month(
     db: Session = Depends(get_db)
 ):
 
-    next_month_year = year
-    next_month = month + 1
-    if next_month > 12:
-        next_month_year = year + 1
-        next_month = 1
+    next_month_year, next_month = get_next_month(year, month)
+    last_month_year, last_month = get_last_month(year, month)
+    
 
-    last_month_year = year
-    last_month = month - 1
-    if last_month < 1:
-        last_month_year = year - 1
-        last_month = 12
 
+    today = datetime.today().date()
     from_date, to_date = get_month_range(year, month)
 
-    expenses_for_month = crud.get_expenses(db, from_date, to_date)
-
+   
+    # Get list for ids and names of categories
     categories = crud.get_tags(db, tag_type="category")
-
     cat_ids = [tag.id for tag in categories]
     cat_names = [tag.name for tag in categories]
 
+    # Get all expenses for the month
+    expenses_for_month = crud.get_expenses(db, from_date, to_date)
+
+    # Cluster expenses by category
     expenses_cluster = cluster_expenses_by_category(expenses_for_month, cat_ids)
 
     data = [sum_expenses(e) for e in expenses_cluster]
@@ -161,6 +159,14 @@ def read_statistic_month(
         "sonstiges": 400
     }
 
+    monthly_limit = sum(_category_limits.values())
+
+    sum_of_expenses = sum(data)
+    prognosed_expenses = calculate_prognosis(from_date, to_date, today, monthly_limit)
+    savings = 3000 - sum_of_expenses - prognosed_expenses
+    if savings < 0:
+        savings = 0  # No negative savings
+
     return {
         "title": f'Auswertung {get_month(month)} {year}',
         "month": month,
@@ -169,9 +175,15 @@ def read_statistic_month(
         "last_month_year": last_month_year,
         "next_month": next_month,
         "next_month_year": next_month_year,
-        "limit": 3000,
-        "limits":  [_category_limits.get(category, 0.0) for category in cat_ids],
+
+        # accumulate expenses
         "dataset_label": "Ausgaben (€)",
+        "limit": 3000,
+        "prognose": prognosed_expenses,
+        "sum": sum_of_expenses,
+        "savings": savings,   
+
+        "limits":  [_category_limits.get(category, 0.0) for category in cat_ids],
         "labels": cat_names,
         "data": data,
         "expenses": expenses_cluster,

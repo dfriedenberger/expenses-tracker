@@ -82,3 +82,21 @@ def get_month(month: int):
 
     # Rückgabe des Monatsnamens
     return months[month - 1]
+
+
+def get_next_month(year, month):
+    next_month_year = year
+    next_month = month + 1
+    if next_month > 12:
+        next_month_year = year + 1
+        next_month = 1
+    return next_month_year, next_month
+
+
+def get_last_month(year, month):
+    last_month_year = year
+    last_month = month - 1
+    if last_month < 1:
+        last_month_year = year - 1
+        last_month = 12
+    return last_month_year, last_month
