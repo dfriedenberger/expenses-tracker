@@ -179,9 +179,9 @@ def read_statistic_month(
         # accumulate expenses
         "dataset_label": "Ausgaben (€)",
         "limit": 3000,
-        "prognose": prognosed_expenses,
-        "sum": sum_of_expenses,
-        "savings": savings,   
+        "prognose": round(prognosed_expenses, 2),
+        "sum": round(sum_of_expenses, 2),
+        "savings": round(savings, 2),
 
         "limits":  [_category_limits.get(category, 0.0) for category in cat_ids],
         "labels": cat_names,

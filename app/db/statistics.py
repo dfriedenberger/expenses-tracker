@@ -21,6 +21,4 @@ def calculate_prognosis(from_date, to_date, today, monthly_limit):
     if today < from_date:
         prognosis = monthly_limit
 
-    # Round to two decimal places
-    prognosis = round(prognosis, 2)
     return prognosis
