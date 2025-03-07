@@ -21,10 +21,34 @@
 <body>
     <div class="container">
         <h1 class="mt-5">Haushaltsausgaben-Tracker</h1>
-        <button class="btn btn-primary my-3 btn-new"><i class="bi bi-plus-circle"></i> Ausgabe</button>
-        <button class="btn btn-primary my-3 btn-new-tag"><i class="bi bi-plus-circle"></i> Tag</button>
-        <button class="btn btn-primary my-3 btn-statistic"><i class="bi bi-file-earmark-excel-fill"></i> Auswertung</button>
-        <div id="expenses-list">
+
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary btn-new"><i class="bi bi-plus-circle"></i> Ausgabe</button>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-file-earmark-excel-fill"></i> Auswertung
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item btn-statistic-week">Wochenstatistik</a></li>
+                    <li><a class="dropdown-item btn-statistic-month">Monatsstatistik</a></li>
+                    <!-- <li><a class="dropdown-item btn-statistic-vacation">Urlaube</a></li> -->
+                </ul>
+            </div>
+
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear-fill"></i> Einstellungen
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item btn-new-tag" href="#"><i class="bi bi-plus-circle"></i> Tag</a></li>
+                    <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle"></i> Währung</a></li> -->
+                </ul>
+            </div>
+
+
+        </div>
+
+        <div id="expenses-list" class="mt-3">
             <!-- Expenses will be listed here -->
         </div>
     </div>
@@ -86,7 +110,7 @@
         </div>
         <br />
         <div class="d-flex justify-content-between align-items-start">
-            <p class="mb-1">Wöchentliches Budget</p>
+            <p class="mb-1">{{limittext}}</p>
             <p class="mb-1">{{limit}} €</p>
         </div>
     </script>
@@ -198,25 +222,25 @@
     </div>
 
 
-    <!-- Statistic  Modal -->
-    <div class="modal fade" id="statisticModal" tabindex="-1" aria-labelledby="statisticModalLabel" aria-hidden="true">
+    <!-- Statistic Week Modal -->
+    <div class="modal fade" id="statisticWeekModal" tabindex="-1" aria-labelledby="statisticWeekModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-file-earmark-excel-fill"></i> Statistik</i></h5>
                 </div>
                 <div class="modal-body">
-                    <h5 id="statistic-title"></h5>
+                    <h5 id="statistic-week-title"></h5>
 
                     <div class="d-flex align-items-center">
-                        <span class="mr-3" id="statistic-subtitle">Your Text Here</span>
-                        <button class="btn btn-light btn-sm btn-statistic" id="statistic-last-week"><i class="bi bi-arrow-left-circle-fill"></i></button>
-                        <button class="btn btn-light btn-sm btn-statistic" id="statistic-next-week"><i class="bi bi-arrow-right-circle-fill"></i></button>
+                        <span class="mr-3" id="statistic-week-subtitle">Your Text Here</span>
+                        <button class="btn btn-light btn-sm btn-statistic-week" id="statistic-last-week"><i class="bi bi-arrow-left-circle-fill"></i></button>
+                        <button class="btn btn-light btn-sm btn-statistic-week" id="statistic-next-week"><i class="bi bi-arrow-right-circle-fill"></i></button>
                     </div>
                     
-                    <canvas id="myChart"></canvas>
+                    <canvas id="statistic-week-chart"></canvas>
 
-                    <div id="statistic-details"></div>
+                    <div id="statistic-week-details"></div>
 
                 </div>
                 <div class="modal-footer">
@@ -225,6 +249,72 @@
             </div>
         </div>
     </div>
+
+
+      <!-- Statistic Month Modal -->
+      <div class="modal fade" id="statisticMonthModal" tabindex="-1" aria-labelledby="statisticMonthModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-earmark-excel-fill"></i> Statistik</i></h5>
+                </div>
+                <div class="modal-body">
+
+                    <div class="d-flex align-items-center">
+                        <h5 id="statistic-month-title"></h5>
+                        <div class="ms-auto">
+                            <button class="btn btn-light btn-sm btn-statistic-month" id="statistic-last-month"><i class="bi bi-arrow-left-circle-fill"></i></button>
+                            <button class="btn btn-light btn-sm btn-statistic-month" id="statistic-next-month"><i class="bi bi-arrow-right-circle-fill"></i></button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Tortengrafik -->
+                        <div class="col-md-6">
+                            <canvas id="statistic-month-chart"></canvas>
+                        </div>
+                
+                        <!-- Tabelle -->
+                        <div class="col-md-6">
+                            <h3 class="fs-5">Zusammenfassung</h3>
+                            <table class="table table-sm table-bordered">
+                                <thead class="fs-6">
+                                    <tr>
+                                        <th>Kategorie</th>
+                                        <th>Wert</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="fs-7" id="statistic-month-table">
+                                  
+                                </tbody>
+                            </table>
+                            
+                                 <!-- Budget und Sparen Werte -->
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Budget</strong></td>
+                                        <td id="statistic-month-budget">1000</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sparen</strong></td>
+                                        <td id="statistic-month-sparen">200</td>
+                                        
+                                    </tr>
+                                </tbody>
+                        </table>
+                        </div>
+                    </div>
+
+                    <div id="statistic-month-details"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary close-modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"></script>

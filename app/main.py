@@ -9,7 +9,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from db.util import get_env_variable, get_week_range, get_iso_weeks_in_year, get_week_day
+from db.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month
 from db import schemas
 from db import crud
 from db.database import SessionLocal
@@ -58,19 +58,23 @@ def get_db():
 
 
 @app.get("/util/kw/")
-def get_kw():
+def get_kw_year():
     year, week, _ = datetime.today().isocalendar()
     return {"year": year, "week": week}
 
 
-@app.get("/statistic/")
-def read_statistic(
+@app.get("/util/month/")
+def get_month_year():
+    today = datetime.today()
+    return {"month": today.month, "year": today.year}
+
+
+@app.get("/statistic/week/")
+def read_statistic_week(
     year: int = Query(..., description="Jahr der Statistik"),  # ... bedeutet Pflichtparameter
     week: int = Query(..., description="Kalenderwoche der Statistik"),  # ... bedeutet Pflichtparameter
     db: Session = Depends(get_db)
 ):
-    if year is None or week is None:
-        year, week, _ = datetime.today().isocalendar()
 
     next_week_year = year
     next_week = week + 1
@@ -85,7 +89,6 @@ def read_statistic(
         last_week = get_iso_weeks_in_year(last_week_year)
 
     from_date, to_date = get_week_range(year, week)
-
     expenses_for_kw = crud.get_expenses(db, from_date, to_date)
 
     categories = crud.get_tags(db, tag_type="category")
@@ -116,6 +119,61 @@ def read_statistic(
         "labels": cat_names,
         "data": data,
         "limits": [_category_limits.get(category, 0.0) for category in cat_ids],
+        "expenses": expenses_cluster,
+    }
+
+
+@app.get("/statistic/month/")
+def read_statistic_month(
+    year: int = Query(..., description="Jahr der Statistik"),  
+    month: int = Query(..., description="Monat der Statistik"), 
+    db: Session = Depends(get_db)
+):
+
+    next_month_year = year
+    next_month = month + 1
+    if next_month > 12:
+        next_month_year = year + 1
+        next_month = 1
+
+    last_month_year = year
+    last_month = month - 1
+    if last_month < 1:
+        last_month_year = year - 1
+        last_month = 12
+
+    from_date, to_date = get_month_range(year, month)
+
+    expenses_for_month = crud.get_expenses(db, from_date, to_date)
+
+    categories = crud.get_tags(db, tag_type="category")
+
+    cat_ids = [tag.id for tag in categories]
+    cat_names = [tag.name for tag in categories]
+
+    expenses_cluster = cluster_expenses_by_category(expenses_for_month, cat_ids)
+
+    data = [sum_expenses(e) for e in expenses_cluster]
+
+    _category_limits = {
+        "lebensmittel": 800,
+        "tanken": 200,
+        "sonstiges": 400
+    }
+
+    return {
+        "title": f'Auswertung {get_month(month)} {year}',
+        "month": month,
+        "year": year,
+        "last_month": last_month,
+        "last_month_year": last_month_year,
+        "next_month": next_month,
+        "next_month_year": next_month_year,
+        "limit": 3000,
+        "limits":  [_category_limits.get(category, 0.0) for category in cat_ids],
+        "dataset_label": "Ausgaben (€)",
+        "labels": cat_names,
+        "data": data,
         "expenses": expenses_cluster,
     }
 

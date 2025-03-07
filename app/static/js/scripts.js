@@ -378,6 +378,8 @@ $(document).ready(function () {
         $("#tagModalLabel").text("Neuer Tag")
 
         $("#tag-name").val("")
+        $("#tag-id").val("")
+
         //handle input in field name
         $('#tag-name').on('input', function() {
             let n  = $(this).val()
@@ -412,8 +414,7 @@ $(document).ready(function () {
     })
 
     //Statistics
-    let myChart;
-    $(document).on('click', '.btn-statistic', function () {
+    $(document).on('click', '.btn-statistic-week', function () {
         year = $(this).data("year")
         week = $(this).data("week")
 
@@ -421,35 +422,67 @@ $(document).ready(function () {
 
         if(year && week)
         {
-            get_statistic(year, week)
+            get_statistic_week(year, week)
             return
         }
         $.get('/util/kw/', function (data) {
-            get_statistic(data.year, data.week)
+            get_statistic_week(data.year, data.week)
 
         })
     })
    
 
+    $(document).on('click', '.btn-statistic-month', function () {
+        year = $(this).data("year")
+        month = $(this).data("month")
 
-    function get_statistic(year, week) {
+        console.log(year, month)
 
-        $.get('/statistic/', { year: year, week: week }, function (statistic) {
+        if(year && month)
+        {
+            get_statistic_month(year, month)
+            return
+        }
+        $.get('/util/month/', function (data) {
+            get_statistic_month(data.year, data.month)
+        })
+    })
 
-                const ctx = document.getElementById('myChart').getContext('2d');
+    $(document).on('click', '.btn-statistic-vacation', function () {
+        year = $(this).data("year")
+        console.log(year)
+
+        if(year)
+        {
+            get_statistic_vacation(year)
+            return
+        }
+        $.get('/util/month/', function (data) {
+            get_statistic_vacation(data.year)
+        })
+        get_statistic_vacation()
+    })
+
+    let weekChart;
+    function get_statistic_week(year, week) {
+
+        $.get('/statistic/week/', { year: year, week: week }, function (statistic) {
+
+                const ctx = document.getElementById('statistic-week-chart').getContext('2d');
     
-                $("#statistic-title").text(statistic.title)
-                $("#statistic-subtitle").text(statistic.subtitle)
+                $("#statistic-week-title").text(statistic.title)
+                $("#statistic-week-subtitle").text(statistic.subtitle)
                 $("#statistic-next-week").data("year",statistic.next_week_year)
                 $("#statistic-next-week").data("week",statistic.next_week)
                 $("#statistic-last-week").data("year",statistic.last_week_year)
                 $("#statistic-last-week").data("week",statistic.last_week)
 
-                l = statistic.data.length
+                let l = statistic.data.length
 
-                data_ist = Array(l)
-                data_rest = Array(l)
-                data_oversized = Array(l)
+                let data_ist = Array(l)
+                let data_rest = Array(l)
+                let data_oversized = Array(l)
+
                 for(var i = 0;i < l;i++)
                 {
                     if(statistic.data[i] <= statistic.limits[i]) 
@@ -493,11 +526,11 @@ $(document).ready(function () {
                 };
 
 
-                if (myChart) {
-                    myChart.destroy();
+                if (weekChart) {
+                    weekChart.destroy();
                 }
     
-                myChart = new Chart(ctx, {
+                weekChart = new Chart(ctx, {
                     type: 'bar',
                     data: data,
                     options: {
@@ -512,11 +545,11 @@ $(document).ready(function () {
                             }
                         },
                         responsive: true,
-                        onClick: function(c,i) {
+                        onClick: function(_,i) {
                             if(i.length > 0) {
                                 category_id = i[0].index
                                 //dataset_ix = i[0].datasetIndex
-                                open_statistic_category(category_id)
+                                open_statistic_category(category_id, 'week')
                             }
                     
                         }
@@ -526,52 +559,160 @@ $(document).ready(function () {
 
             
                 //statistic details
-
-                const statisticDetails = $('#statistic-details');
-                statisticDetails.empty();
+                create_statistic_categories($('#statistic-week-details'), 'week', statistic, "Wöchentliches Budget")
         
-                let expenseSource = $("#expense-short-template").html();
-                let expenseTemplate = Handlebars.compile(expenseSource);
-                let expenseSourceSum = $("#expense-sum-template").html();
-                let expenseTemplateSum = Handlebars.compile(expenseSourceSum);
-                for(var i = 0;i < l;i++) {
+        })
+        $('#statisticWeekModal').modal('show');
+    }
 
-                    console.log(statistic.labels[i], statistic.expenses[i])
-                    statisticDetails.append("<div id='statistic-category-"+i+"' style='display:none'><h5>"+statistic.labels[i]+"</h5></div>")
-                    statistic.expenses[i].forEach(expense => {                    
-                        //Map date
-                        const date = new Date(expense.date);
-                        expense.date = date.toLocaleDateString("de-DE", { 
-                            weekday: "short", 
-                            day: "numeric", 
-                            month: "numeric", 
-                            year: "numeric"
-                        });
+    let monthChart;
+    function get_statistic_month(year, month) {
+        console.log("get_statistic_month", year, month);
+        $.get('/statistic/month/', { year: year, month: month }, function (statistic) {
+            console.log(statistic)
 
-                        console.log(expense)
+            const ctx = document.getElementById('statistic-month-chart').getContext('2d');
 
-                        var html = expenseTemplate(expense);
-                        $("#statistic-category-"+i).append(html);
-                    });
+            $("#statistic-month-title").text(statistic.title)
+            $("#statistic-next-month").data("year",statistic.next_month_year)
+            $("#statistic-next-month").data("month",statistic.next_month)
+            $("#statistic-last-month").data("year",statistic.last_month_year)
+            $("#statistic-last-month").data("month",statistic.last_month)
 
-                    var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": statistic.limits[i] })
-                    $("#statistic-category-"+i).append(html);
+            if (monthChart) {
+                monthChart.destroy();
+            }
+
+            // statistic.data summieren
+            let summe = 0;
+            for(var i = 0;i < statistic.data.length;i++)
+                summe += statistic.data[i];
+
+            let sparen = statistic.limit - summe;
+            if(sparen < 0)
+                sparen = 0; 
+
+            let data = statistic.data.slice()
+            data.push(sparen)
+
+            let labels = statistic.labels.slice()
+            labels.push("Sparen")
+
+            monthChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#1E90FF', '#32CD32', '#FF6347', '#FFA500', '#aaaaaa']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' €';
+                                }
+                            }
+                        }
+                    },
+                    onClick: function(_,i) {
+                        if(i.length > 0) {
+                            category_id = i[0].index
+                            open_statistic_category(category_id,'month')
+                        }
+                
+                    }
                 }
+            });
+
+            //table
+            const statisticTable = $('#statistic-month-table');
+            statisticTable.empty();
+
+            for(var i = 0;i < statistic.labels.length;i++) {
+                var row = $('<tr>');
+                row.append($('<td>').text(statistic.labels[i]));
+                row.append($('<td>').text(statistic.data[i] + ' €'));
+                statisticTable.append(row);
+            }   
+            var row = $('<tr>');
+            row.append($('<td>').html($('<strong>').text("Summe")));
+            row.append($('<td>').text(summe + ' €'));
+            statisticTable.append(row);
+
+            $("#statistic-month-budget").text(statistic.limit + ' €');
+
+            $("#statistic-month-sparen").text(sparen + ' €');   
+
+            //statistic details
+            create_statistic_categories($('#statistic-month-details'), 'month', statistic, "Monatliches Budget")
+
+            $('#statisticMonthModal').modal('show');
 
         })
-        $('#statisticModal').modal('show');
     }
-    open_statistic_category_index = -1
-    function open_statistic_category(i) {
 
+    function get_statistic_vacation(year) {
+        console.log("get_statistic_vacation", )
+    }
+
+
+
+
+    //util functions for weekly statistic
+    let open_statistic_category_index = -1
+
+    function create_statistic_categories(statisticDetails, statisticClass, statistic, limittext) {
+
+        let l = statistic.data.length
+
+        statisticDetails.empty();
+
+        let expenseSource = $("#expense-short-template").html();
+        let expenseTemplate = Handlebars.compile(expenseSource);
+        let expenseSourceSum = $("#expense-sum-template").html();
+        let expenseTemplateSum = Handlebars.compile(expenseSourceSum);
+        for(var i = 0;i < l;i++) {
+
+            console.log(statistic.labels[i], statistic.expenses[i])
+            statisticDetails.append("<div id='statistic-category-"+statisticClass+"-"+i+"' style='display:none'><h5>"+statistic.labels[i]+"</h5></div>")
+            statistic.expenses[i].forEach(expense => {                    
+                //Map date
+                const date = new Date(expense.date);
+                expense.date = date.toLocaleDateString("de-DE", { 
+                    weekday: "short", 
+                    day: "numeric", 
+                    month: "numeric", 
+                    year: "numeric"
+                });
+
+                console.log(expense)
+
+                var html = expenseTemplate(expense);
+                $("#statistic-category-"+statisticClass+"-"+i).append(html);
+            });
+
+            var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": statistic.limits[i], "limittext" : limittext })
+            $("#statistic-category-"+i).append(html);
+        }
+        open_statistic_category_index = -1
+    }
+
+
+    function open_statistic_category(i, statisticClass) {
+
+        console.log("open_statistic_category", i, open_statistic_category_index)
         if(open_statistic_category_index == i)
             return;
         
-        $("#statistic-category-"+i).slideDown();
+        $("#statistic-category-"+statisticClass+"-"+i).slideDown();
 
 
         if(open_statistic_category_index >= 0) {
-            $("#statistic-category-"+open_statistic_category_index).slideUp();
+            $("#statistic-category-"+statisticClass+"-"+open_statistic_category_index).slideUp();
         }
         open_statistic_category_index = i
 

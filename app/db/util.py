@@ -33,6 +33,19 @@ def get_week_range(year: int, week: int):
     return start_date, end_date
 
 
+def get_month_range(year: int, month: int):
+    # Erster Tag des Monats
+    start_date = date(year, month, 1)
+
+    # Letzter Tag des Monats
+    if month == 12:
+        end_date = date(year, 12, 31)
+    else:
+        end_date = date(year, month + 1, 1) - timedelta(days=1)
+
+    return start_date, end_date
+
+
 def get_iso_weeks_in_year(year: int) -> int:
     """Returns the number of ISO calendar weeks in a given year."""
     last_week = date(year, 12, 28).isocalendar()[1]  # KW von 28. Dez. bestimmen
@@ -48,3 +61,24 @@ def get_week_day(day: date):
 
     # Rückgabe der Kurzform des Wochentages
     return week_days[day_index]
+
+
+def get_month(month: int):
+    # Statisches Array für die deutschen Monatsnamen
+    months = [
+        "Januar",
+        "Februar",
+        "März",
+        "April",
+        "Mai",
+        "Juni",
+        "Juli",
+        "August",
+        "September",
+        "Oktober",
+        "November",
+        "Dezember"
+    ]
+
+    # Rückgabe des Monatsnamens
+    return months[month - 1]
