@@ -583,10 +583,11 @@ $(document).ready(function () {
                 monthChart.destroy();
             }
 
-            // statistic.data summieren
+            // statistic.data summieren und summe runden
             let summe = 0;
             for(var i = 0;i < statistic.data.length;i++)
                 summe += statistic.data[i];
+            summe = Math.round(summe * 100) / 100;
 
             let sparen = statistic.limit - summe;
             if(sparen < 0)
