@@ -133,13 +133,10 @@ def read_statistic_month(
 
     next_month_year, next_month = get_next_month(year, month)
     last_month_year, last_month = get_last_month(year, month)
-    
-
 
     today = datetime.today().date()
     from_date, to_date = get_month_range(year, month)
 
-   
     # Get list for ids and names of categories
     categories = crud.get_tags(db, tag_type="category")
     cat_ids = [tag.id for tag in categories]
@@ -193,7 +190,7 @@ def read_statistic_month(
 # Tag
 @app.get("/tags/", response_model=List[schemas.Tag])
 def read_tags(db: Session = Depends(get_db)):
-    return crud.get_tags(db)
+    return crud.get_tags(db, sort_order=["category", "tag", "person", "location", "vacation"])
 
 
 @app.post("/tags/", response_model=schemas.Tag)

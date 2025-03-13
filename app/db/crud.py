@@ -1,14 +1,25 @@
 from datetime import date
 from sqlalchemy.orm import Session
+from sqlalchemy import case
+
 from . import models, schemas
 
 
-def get_tags(db: Session, tag_type: str = None):
+def get_tags(db: Session, tag_type: str = None, sort_order: list = None):
     query = db.query(models.Tag)
 
     # Filter
     if tag_type:
         query = query.filter(models.Tag.tag_type == tag_type)
+
+    # Sortierung
+    if sort_order:
+        order_case = case(
+                *[(models.Tag.tag_type == value, index) for index, value in enumerate(sort_order)],
+                else_=len(sort_order)  # Falls der Wert nicht in der Liste ist, ans Ende setzen
+        )
+        query = query.order_by(order_case)
+
     return query.all()
 
 
