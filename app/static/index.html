@@ -72,10 +72,10 @@
             <p class="mb-1">{{date}}</p>
             <div>
                 {{#each tag_categories}}   
-                    <span class="badge bg-primary">{{this}}</span>
+                    <span class="badge bg-primary"><i class="bi bi-shield-fill"></i> {{this}}</span>
                 {{/each}}
                 {{#each tag_tags}}   
-                    <span class="badge bg-info">{{this}}</span>
+                    <span class="badge bg-info"><i class="bi bi-tag-fill"></i> {{this}}</span>
                 {{/each}}
                 {{#each tag_persons}}   
                     <span class="badge bg-success"><i class="bi bi-person-fill"></i> {{this}}</span>
@@ -117,7 +117,7 @@
 
     <!-- Tags -->
     <script id="tags-template" type="text/x-handlebars-template">
-        <button class="btn btn-sm tag" id="{{id}}" data-tag-typ="{{tag_type}}" type="button">{{name}} <i class="bi"></i></button>
+        <button class="btn btn-sm toggle-btn {{tag_type}} inactive" id="{{id}}" type="button">{{name}} <i class="bi"></i></button>
     </script>
 
     <!-- Expense Modal -->

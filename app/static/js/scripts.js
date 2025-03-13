@@ -123,6 +123,8 @@ $(document).ready(function () {
         })
       
     })
+
+
     //Tags
     function tags_set_value(tags) {
 
@@ -144,13 +146,12 @@ $(document).ready(function () {
                 var html = template(tag);
                 tagList.append(html);
 
+                $("#"+tag.id).find(".bi").addClass(tag_configuration[tag.tag_type])
+
+
                 if(tags.includes(tag.id))
                 {
-                    tag_enable(tag.id)
-                }
-                else
-                {
-                    tag_disable(tag.id)
+                    $("#"+tag.id).removeClass("inactive").addClass("active")
                 }
 
             });
@@ -161,88 +162,32 @@ $(document).ready(function () {
     }
 
     function tag_is_enabled(tag) {
-        return $("#"+tag).data("enabled")
+        return $("#"+tag).hasClass("active")
     }
 
     var tag_configuration = {
-        "category" : {
-            "enable_class": "btn-primary",
-            "disable_class": "btn-outline-primary",
-            "enable_icon": "bi-shield-minus" ,
-            "disable_icon": "bi-shield-plus"
-        },
-        "person" : {
-            "enable_class": "btn-success",
-            "disable_class": "btn-outline-success",
-            "enable_icon": "bi-person-fill-dash",
-            "disable_icon": "bi-person-fill-add"
-        },
-        "tag" : {
-            "enable_class": "btn-info",
-            "disable_class": "btn-outline-info",
-            "enable_icon": "bi-shield-minus" ,
-            "disable_icon": "bi-shield-plus"
-        },
-        "location" : {
-            "enable_class": "btn-warning",
-            "disable_class": "btn-outline-warning",
-            "enable_icon": "bi-house-dash-fill",
-            "disable_icon": "bi-house-add-fill"
-        },
-        "vacation" : {
-            "enable_class": "btn-danger",
-            "disable_class": "btn-outline-danger",
-            "enable_icon": "bi-shield-minus",
-            "disable_icon": "bi-shield-plus"
-        },
+        "category" : "bi-shield-fill",
+        "person" : "bi-person-fill",
+        "tag" : "bi-tag-fill" ,
+        "location" : "bi-house-fill",
+        "vacation" : "bi-suitcase-lg-fill",
     }
 
-    function tag_enable(tag) {
-        tag_type = $("#"+tag).data("tag-typ")
-        config = tag_configuration[tag_type]
-
-        $("#"+tag).removeClass(config["disable_class"])
-        $("#"+tag).addClass(config["enable_class"])
-        $("#"+tag).find(".bi").removeClass(config["disable_icon"])
-        $("#"+tag).find(".bi").addClass(config["enable_icon"])
-        $("#"+tag).data("enabled", true)
-    }
-
-    function tag_disable(tag) {
-        tag_type = $("#"+tag).data("tag-typ")
-        config = tag_configuration[tag_type]
-
-        $("#"+tag).removeClass(config["enable_class"])
-        $("#"+tag).addClass(config["disable_class"])
-        $("#"+tag).find(".bi").removeClass(config["enable_icon"])
-        $("#"+tag).find(".bi").addClass(config["disable_icon"])
-        $("#"+tag).data("enabled", false)
-    }
+   
 
     function tags_getValues() {
         tags = []
         $("#tags").children().each(function() {
-            tag = $(this).attr('id')
-            if(tag_is_enabled(tag))
+            if($(this).hasClass("active"))
             {
-                tags.push(tag)
+                tags.push($(this).attr('id'))
             }
         })
         return tags
     }
 
-    $(document).on('click', '.tag', function () {
-        tag = $(this).attr('id')
-
-        if(tag_is_enabled(tag))
-        {
-            tag_disable(tag)
-        }
-        else
-        {
-            tag_enable(tag)
-        }
-
+    $(document).on('click', '.toggle-btn', function () {
+        $(this).toggleClass('active inactive');
     })
    
   
