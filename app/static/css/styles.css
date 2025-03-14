@@ -16,6 +16,10 @@
     flex-shrink: 0; /* Buttons sollen nicht schrumpfen */
 }
 
+.btn-group .dropdown-item {
+    cursor: pointer; /* Setzt den Mauszeiger auf den Hand-Symbol (Finger) */
+}
+
 
 /* Gemeinsame Styles für alle Buttons */
 .toggle-btn {

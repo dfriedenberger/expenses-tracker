@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - #35 add version and date to webpage and create CHANGELOG
 - #9 fit README
+### Fixes
+- use cursor pointer for dropdown menu
 
 ## [0.0.1] - 2025-03-14
 ### Added
