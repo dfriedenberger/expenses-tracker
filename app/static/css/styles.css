@@ -5,6 +5,17 @@
     border-radius: 5px;
 }
 
+.expense-item h5 {
+    flex-shrink: 1; /* Verhindert, dass der Text zu viel Platz wegnimmt */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.expense-item .d-flex > div {
+    flex-shrink: 0; /* Buttons sollen nicht schrumpfen */
+}
+
 
 /* Gemeinsame Styles für alle Buttons */
 .toggle-btn {
