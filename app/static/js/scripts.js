@@ -15,7 +15,7 @@ $(document).ready(function () {
                 month: "numeric",
                 year: "numeric"
             });
-            $('#date').text(german_date); 
+            $('#version-date').text(german_date); 
         })
     }
 
