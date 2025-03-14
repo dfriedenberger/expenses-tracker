@@ -1,7 +1,24 @@
 $(document).ready(function () {
 
+    fetchVersionAndDate();
     fetchExpenses();
     
+    // Fetch version and date from the backend
+    function fetchVersionAndDate() {
+
+        $.get('/util/version/', function (data) {
+            $('#version').text(data.version);
+            //convert to german date
+            const date = new Date(data.date);
+            german_date = date.toLocaleDateString("de-DE", {
+                day: "numeric",
+                month: "numeric",
+                year: "numeric"
+            });
+            $('#date').text(german_date); 
+        })
+    }
+
     // Fetch expenses from the backend
     function fetchExpenses() {
         $.get('/currencies/', function (currency_list) {

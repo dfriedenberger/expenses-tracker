@@ -9,12 +9,13 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from db.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
-from db import schemas
-from db import crud
-from db.database import SessionLocal
-from db.expense_stats import sum_expenses, cluster_expenses_by_category
-from db.statistics import calculate_prognosis
+from lib.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
+from lib import schemas
+from lib import crud
+from lib.database import SessionLocal
+from lib.expense_stats import sum_expenses, cluster_expenses_by_category
+from lib.statistics import calculate_prognosis
+from lib import __version__, __date__
 
 # Create database tables, is controled by liqui base
 # models.Base.metadata.create_all(bind=engine)
@@ -56,6 +57,11 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.get("/util/version/")
+def get_version():
+    return {"version": __version__, "date": __date__}
 
 
 @app.get("/util/kw/")
