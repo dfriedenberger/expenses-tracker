@@ -2,13 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    "config:base"
+    "config:recommended"
   ],
   "packageRules": [
-      {
-        "packageNames": ["python"],
-        "enabled": true,
-        "allowedVersions": ">=3.11.0 <3.12.0"
-      }
+    {
+      "matchPackageNames": [
+        "python"
+      ],
+      "enabled": true,
+      "allowedVersions": ">=3.11.0 <3.12.0"
+    }
   ]
 }
