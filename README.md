@@ -53,7 +53,7 @@ Set environment for application
 ```sh
 export WEB_USERNAME="admin"
 export WEB_PASSWORD="supersecret"
-export SQLALCHEMY_DATABASE_URL="postgresql://<youruser>:<yourpassword>@localhost/expenses"
+export SQLALCHEMY_DATABASE_URL="postgresql://youruser:yourpassword@localhost/expenses"
 ```
 
 Alternatively, environment variables can be loaded from a `.env` file. Refer to this [Stack Overflow discussion](https://stackoverflow.com/questions/43267413/how-to-set-environment-variables-from-env-file) for more details.

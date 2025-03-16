@@ -9,7 +9,8 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from lib.util import get_env_variable, get_week_range, get_month_range, get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
+from lib.util import get_env_variable, get_week_range, get_month_range, get_year_range
+from lib.util import get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
 from lib import schemas
 from lib import crud
 from lib.database import SessionLocal
@@ -187,6 +188,37 @@ def read_statistic_month(
         "savings": round(savings, 2),
 
         "limits":  [_category_limits.get(category, 0.0) for category in cat_ids],
+        "labels": cat_names,
+        "data": data,
+        "expenses": expenses_cluster,
+    }
+
+
+@app.get("/statistic/vacation/")
+def read_statistic_vacation(
+    year: int = Query(..., description="Jahr der Statistik"),
+    db: Session = Depends(get_db)
+):
+
+    from_date, to_date = get_year_range(year)
+
+    # Get list for ids and names of categories
+    categories = crud.get_tags(db, tag_type="vacation")
+    cat_ids = [tag.id for tag in categories]
+    cat_names = [tag.name for tag in categories]
+
+    # Get all expenses for the month
+    expenses_for_year = crud.get_expenses(db, from_date, to_date, tag="urlaub")
+
+    # Cluster expenses by category
+    expenses_cluster = cluster_expenses_by_category(expenses_for_year, cat_ids)
+
+    data = [sum_expenses(e) for e in expenses_cluster]
+    return {
+        "title": f'Urlaubsauswertung {year}',
+        "year": year,
+        "next_year": year + 1,
+        "last_year": year - 1,
         "labels": cat_names,
         "data": data,
         "expenses": expenses_cluster,

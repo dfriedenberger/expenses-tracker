@@ -422,7 +422,6 @@ $(document).ready(function () {
         $.get('/util/month/', function (data) {
             get_statistic_vacation(data.year)
         })
-        get_statistic_vacation()
     })
 
     let weekChart;
@@ -623,7 +622,20 @@ $(document).ready(function () {
     }
 
     function get_statistic_vacation(year) {
-        console.log("get_statistic_vacation", )
+        console.log("get_statistic_vacation", year)
+        $.get('/statistic/vacation/', { year: year }, function (statistic) {
+            console.log(statistic)
+
+            $("#statistic-vacation-title").text(statistic.title)
+            $("#statistic-next-year").data("year",statistic.next_year)
+            $("#statistic-last-year").data("year",statistic.last_year)
+
+            create_statistic_categories($('#statistic-vacation-details'), 'vacation', statistic, undefined)
+            $('#statistic-vacation-details').find("div").show(0); //workaround
+            
+            $('#statisticVacationModal').modal('show');
+
+        });
     }
 
 
@@ -662,7 +674,10 @@ $(document).ready(function () {
                 $("#statistic-category-"+statisticClass+"-"+i).append(html);
             });
 
-            var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": statistic.limits[i], "limittext" : limittext })
+            limit = undefined;
+            if (statistic.limits)
+                limit = statistic.limits[i]
+            var html = expenseTemplateSum({"sum" : statistic.data[i], "limit": limit, "limittext" : limittext })
             $("#statistic-category-"+statisticClass+"-"+i).append(html);
         }
         open_statistic_category_index = -1
