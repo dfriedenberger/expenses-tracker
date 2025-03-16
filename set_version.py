@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import List
 
 CHANGELOG_FILE = "CHANGELOG.md"
-INIT_FILE = "app/lib/__init__.py"
+INIT_FILE = "app/expenses/__init__.py"
 MAIN_BRANCH = "main"
 
 
