@@ -3,6 +3,7 @@ import re
 import sys
 import subprocess
 from datetime import datetime
+from typing import List
 
 CHANGELOG_FILE = "CHANGELOG.md"
 INIT_FILE = "app/lib/__init__.py"
@@ -88,13 +89,20 @@ def insert_version_into_changelog(new_version, new_date):
         file.writelines(content)
 
 
+def exec_command(command: List[str]) -> str:
+    """Führt ein Kommando aus und gibt die Ausgabe auf der Console aus."""
+    print(f"Running {' '.join(command)}")  
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+    print(result.stdout.decode("utf-8"))
+
+
 def git_commit_and_tag(new_version):
     """Commitet die Änderungen und erstellt ein Git-Tag."""
-    subprocess.run(["git", "add", CHANGELOG_FILE, INIT_FILE], check=True)
-    subprocess.run(["git", "commit", "-m", f"Release version {new_version}"], check=True)
-    subprocess.run(["git", "push", "origin", MAIN_BRANCH], check=True)
-    subprocess.run(["git", "tag", new_version], check=True)
-    subprocess.run(["git", "push", "origin", new_version], check=True)
+    exec_command(["git", "add", CHANGELOG_FILE, INIT_FILE])
+    exec_command(["git", "commit", "-m", f"Release version {new_version}"])
+    exec_command(["git", "push", "origin", MAIN_BRANCH])
+    exec_command(["git", "tag", new_version])
+    exec_command(["git", "push", "origin", new_version])
 
 
 def main():
@@ -118,7 +126,7 @@ def main():
 
     update_init_version(new_version, new_date)
     insert_version_into_changelog(new_version, new_date)
-    #git_commit_and_tag(new_version)
+    git_commit_and_tag(new_version)
 
     print(f"✅ Erfolgreich auf Version {new_version} (Datum: {new_date}) aktualisiert!")
 

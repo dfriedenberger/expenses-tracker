@@ -9,13 +9,13 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from sqlalchemy.orm import Session
 
-from lib.util import get_env_variable, get_week_range, get_month_range, get_year_range
-from lib.util import get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
+from expenses.util import get_env_variable, get_week_range, get_month_range, get_year_range
+from expenses.util import get_iso_weeks_in_year, get_week_day, get_month, get_next_month, get_last_month
 from lib import schemas
 from lib import crud
-from lib.database import SessionLocal
-from lib.expense_stats import sum_expenses, cluster_expenses_by_category
-from lib.statistics import calculate_prognosis
+from expenses.database import SessionLocal
+from expenses.expense_stats import sum_expenses, cluster_expenses_by_category
+from expenses.statistics import calculate_prognosis
 from lib import __version__, __date__
 
 # Create database tables, is controled by liqui base
